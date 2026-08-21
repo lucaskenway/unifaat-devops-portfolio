@@ -1,0 +1,105 @@
+name: node-api-stack
+
+# Carrega variáveis do arquivo .env automaticamente
+# Uso: docker compose --env-file .env up
+
+services:
+
+  # ─────────────────────────────────────────────
+  # Banco de dados PostgreSQL 15
+  # ─────────────────────────────────────────────
+  postgres:
+    image: postgres:15-alpine
+    container_name: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB:       ${POSTGRES_DB}
+      POSTGRES_USER:     ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # ─────────────────────────────────────────────
+  # Cache Redis 7
+  # ─────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    restart: unless-stopped
+    command: >
+      redis-server
+      --requirepass ${REDIS_PASSWORD}
+      --appendonly yes
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    networks:
+      - app_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ─────────────────────────────────────────────
+  # API Node.js 20 com Express
+  # ─────────────────────────────────────────────
+  api:
+    image: node:20-alpine
+    container_name: api
+    restart: unless-stopped
+    working_dir: /app
+    # Monta o código-fonte e instala dependências na inicialização
+    command: sh -c "npm install && node server.js"
+    environment:
+      NODE_ENV:          ${NODE_ENV:-production}
+      PORT:              ${API_PORT:-3000}
+      POSTGRES_HOST:     ${POSTGRES_HOST:-postgres}
+      POSTGRES_PORT:     ${POSTGRES_PORT:-5432}
+      POSTGRES_DB:       ${POSTGRES_DB}
+      POSTGRES_USER:     ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      REDIS_HOST:        ${REDIS_HOST:-redis}
+      REDIS_PORT:        ${REDIS_PORT:-6379}
+      REDIS_PASSWORD:    ${REDIS_PASSWORD}
+    ports:
+      - "${API_PORT:-3000}:3000"
+    volumes:
+      - ./app:/app
+    networks:
+      - app_network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:${API_PORT:-3000}/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+# ─────────────────────────────────────────────
+# Volumes nomeados
+# ─────────────────────────────────────────────
+volumes:
+  postgres_data:
+    driver: local
+
+# ─────────────────────────────────────────────
+# Rede bridge customizada
+# ─────────────────────────────────────────────
+networks:
+  app_network:
+    driver: bridge
