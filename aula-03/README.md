@@ -1,4 +1,4 @@
-# Aula 03 — Terraform + IAM | Weslley Lucas (RA 6325226)
+# Aula 03 — Terraform + IAM | RA 6325226
 
 ## Design da Estrutura IAM
 
