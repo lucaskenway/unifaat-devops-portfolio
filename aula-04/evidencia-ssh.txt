@@ -1,0 +1,7 @@
+$ ssh -i ~/.ssh/technova-key ec2-user@3.85.217.23 "node --version && aws sts get-caller-identity"
+v18.20.8
+{
+    "UserId": "AROA6OBGCA6ANPU5F2RQD:i-0d56e382e946a6886",
+    "Account": "992217270144",
+    "Arn": "arn:aws:sts::992217270144:assumed-role/LabRole/i-0d56e382e946a6886"
+}

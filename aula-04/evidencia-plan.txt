@@ -1,0 +1,22 @@
+data.aws_ami.al2023: Reading...
+data.aws_iam_instance_profile.lab: Reading...
+aws_vpc.main: Refreshing state... [id=vpc-093564ecb69aae948]
+aws_key_pair.main: Refreshing state... [id=technova-key]
+data.aws_ami.al2023: Read complete after 1s [id=ami-02b3d83d84b07786d]
+aws_internet_gateway.main: Refreshing state... [id=igw-0642fc34f8a2a7194]
+aws_subnet.public[1]: Refreshing state... [id=subnet-039361e32e1261fbc]
+aws_security_group.db: Refreshing state... [id=sg-012602ce89406061a]
+aws_subnet.private[0]: Refreshing state... [id=subnet-04172123d2c3cf637]
+aws_subnet.public[0]: Refreshing state... [id=subnet-09bb1ff8501e6e1e4]
+aws_subnet.private[1]: Refreshing state... [id=subnet-000651c11631b2d14]
+aws_security_group.api: Refreshing state... [id=sg-06521ddafc4fc74b3]
+aws_route_table.public: Refreshing state... [id=rtb-0390f32f53562474d]
+data.aws_iam_instance_profile.lab: Read complete after 3s [id=AIPA6OBGCA6AMQ55JIBPA]
+aws_route_table_association.public[0]: Refreshing state... [id=rtbassoc-097596ea23f108858]
+aws_route_table_association.public[1]: Refreshing state... [id=rtbassoc-03d38a6a8a97bfb27]
+aws_instance.api: Refreshing state... [id=i-0d56e382e946a6886]
+
+No changes. Your infrastructure matches the configuration.
+
+Terraform has compared your real infrastructure against your configuration
+and found no differences, so no changes are needed.
