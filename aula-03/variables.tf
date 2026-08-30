@@ -19,7 +19,7 @@ variable "environment" {
 variable "aluno" {
   description = "Nome completo do aluno responsável pela entrega"
   type        = string
-  default     = "6325226"
+  default     = "Weslley Lucas Souza Alves"
 }
 
 variable "ra" {
