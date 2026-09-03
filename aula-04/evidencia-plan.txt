@@ -1,20 +1,20 @@
-data.aws_ami.al2023: Reading...
 data.aws_iam_instance_profile.lab: Reading...
-aws_vpc.main: Refreshing state... [id=vpc-093564ecb69aae948]
+aws_vpc.main: Refreshing state... [id=vpc-08f00cc5ac24fa8b3]
+data.aws_ami.al2023: Reading...
 aws_key_pair.main: Refreshing state... [id=technova-key]
-data.aws_ami.al2023: Read complete after 1s [id=ami-02b3d83d84b07786d]
-aws_internet_gateway.main: Refreshing state... [id=igw-0642fc34f8a2a7194]
-aws_subnet.public[1]: Refreshing state... [id=subnet-039361e32e1261fbc]
-aws_security_group.db: Refreshing state... [id=sg-012602ce89406061a]
-aws_subnet.private[0]: Refreshing state... [id=subnet-04172123d2c3cf637]
-aws_subnet.public[0]: Refreshing state... [id=subnet-09bb1ff8501e6e1e4]
-aws_subnet.private[1]: Refreshing state... [id=subnet-000651c11631b2d14]
-aws_security_group.api: Refreshing state... [id=sg-06521ddafc4fc74b3]
-aws_route_table.public: Refreshing state... [id=rtb-0390f32f53562474d]
-data.aws_iam_instance_profile.lab: Read complete after 3s [id=AIPA6OBGCA6AMQ55JIBPA]
-aws_route_table_association.public[0]: Refreshing state... [id=rtbassoc-097596ea23f108858]
-aws_route_table_association.public[1]: Refreshing state... [id=rtbassoc-03d38a6a8a97bfb27]
-aws_instance.api: Refreshing state... [id=i-0d56e382e946a6886]
+data.aws_iam_instance_profile.lab: Read complete after 0s [id=AIPA6OBGCA6AMQ55JIBPA]
+data.aws_ami.al2023: Read complete after 1s [id=ami-007dd4cdc89d5d91d]
+aws_security_group.db: Refreshing state... [id=sg-083fd09033b610cf4]
+aws_security_group.api: Refreshing state... [id=sg-0b6b12b58d0a2d131]
+aws_subnet.private[0]: Refreshing state... [id=subnet-063810eaf5cb2a349]
+aws_subnet.public[1]: Refreshing state... [id=subnet-03f317f51a02e3a42]
+aws_internet_gateway.main: Refreshing state... [id=igw-0e2f6d493b7167fd8]
+aws_subnet.public[0]: Refreshing state... [id=subnet-070faff7c1de9f0f4]
+aws_subnet.private[1]: Refreshing state... [id=subnet-088f4d88dcccab752]
+aws_route_table.public: Refreshing state... [id=rtb-056be262a96c1c8b0]
+aws_instance.api: Refreshing state... [id=i-080c6f6a8f9079d36]
+aws_route_table_association.public[0]: Refreshing state... [id=rtbassoc-0680ba9e28a1118f4]
+aws_route_table_association.public[1]: Refreshing state... [id=rtbassoc-082977272626f9c1b]
 
 No changes. Your infrastructure matches the configuration.
 
