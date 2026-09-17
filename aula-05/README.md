@@ -6,6 +6,7 @@ Dois laboratórios em Terraform: uma VPC com RDS PostgreSQL e EC2 (`aula-05-rds/
 
 - `aula-05-rds/` — VPC (2 AZs, subnets públicas/privadas), RDS PostgreSQL em subnet privada, EC2 na subnet pública conectando ao banco via `psql`.
 - `aula-05-backend/` — bucket S3 (versionado, criptografado, acesso público bloqueado) e tabela DynamoDB para state remoto com locking.
+- `main.tf` / `providers.tf` / `variables.tf` / `outputs.tf` / `.gitignore` (raiz de `aula-05/`) — cópia consolidada do Lab 1 (`aula-05-rds/`), mantida no nível raiz para casar com o layout de entrega esperado pela disciplina. A fonte organizada por responsabilidade (`vpc.tf`, `rds.tf`, `ec2.tf`) continua em `aula-05-rds/`.
 
 ## Como usar
 
