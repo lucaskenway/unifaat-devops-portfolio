@@ -1,0 +1,11 @@
+# terraform.tfvars.example — environments/dev
+#
+# Copie para terraform.tfvars e ajuste os valores.
+# terraform.tfvars NUNCA deve ser commitado (contém a senha do banco) — ver .gitignore.
+
+aws_region  = "us-east-1"
+db_password = "TechNovaDev2025"
+
+# Se já existir uma chave (ex: ~/.ssh/technova-key.pub), ajuste key_name em variables.tf
+# ou sobrescreva aqui:
+# key_name = "minha-chave"
