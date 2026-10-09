@@ -38,6 +38,14 @@ jobs:
           cache: 'npm'
           cache-dependency-path: aula-08/technova-api/package-lock.json
 
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: aula-08/technova-api/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('aula-08/technova-api/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
       - name: Instalar dependências
         run: npm ci
 
@@ -135,6 +143,28 @@ jobs:
         if: always()
         run: docker rm -f test-container || true
 
+  verify-credentials:
+    name: Verify Credentials
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Verificar configuração AWS
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+        run: |
+          echo "Verificando credenciais AWS..."
+          if [ -n "$AWS_ACCESS_KEY_ID" ] && [ -n "$AWS_SECRET_ACCESS_KEY" ]; then
+            echo "✅ Credenciais AWS configuradas"
+            echo "Região: $AWS_DEFAULT_REGION"
+          else
+            echo "❌ Credenciais AWS NÃO configuradas"
+            exit 1
+          fi
+
   # B3 — comenta o resultado do CI no Pull Request
   pr-comment:
     name: Comentar resultado no PR
@@ -170,9 +200,24 @@ jobs:
               '',
               `Commit: \`${context.sha.substring(0, 7)}\` · [Ver execução](${runUrl})`
             ].join('\n');
-            await github.rest.issues.createComment({
-              issue_number: context.issue.number,
+            const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body
+              issue_number: context.issue.number
             });
+            const previous = comments.find(c => c.body.includes('— Aula 08'));
+            if (previous) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: previous.id,
+                body
+              });
+            } else {
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body
+              });
+            }
