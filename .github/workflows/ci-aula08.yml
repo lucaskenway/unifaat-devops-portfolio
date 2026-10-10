@@ -148,6 +148,10 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    # Job sem checkout: sobrescreve o working-directory global, que não existe aqui
+    defaults:
+      run:
+        working-directory: .
 
     steps:
       - name: Verificar configuração AWS
