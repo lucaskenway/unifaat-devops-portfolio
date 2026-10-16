@@ -1,0 +1,16 @@
+diff --git a/aula-09/technova-api/orders-report.js b/aula-09/technova-api/orders-report.js
+new file mode 100644
+index 0000000..7ffa96a
+--- /dev/null
++++ b/aula-09/technova-api/orders-report.js
+@@ -0,0 +1,10 @@
++const dbPassword = 'SuperSenha123';
++const db = require('./db');
++
++module.exports = (req) => {
++  console.log('debug', req.query);
++  try {
++    return db.query('SELECT * FROM orders WHERE id = ' + req.query.id);
++  } catch (e) {}
++  return eval(req.query.expr);
++};

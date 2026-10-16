@@ -1,0 +1,85 @@
+name: Security Scan — Aula 09
+
+# Workflow dedicado a segurança (separado do CI e do AI review)
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'aula-09/technova-api/**'
+      - '.github/workflows/security-scan-aula09.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'aula-09/technova-api/**'
+      - '.github/workflows/security-scan-aula09.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  APP_DIR: aula-09/technova-api
+
+jobs:
+  dependencies:
+    name: npm audit (dependências de produção)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.APP_DIR }}
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: npm audit
+        run: npm audit --omit=dev --audit-level=critical
+
+  dockerfile:
+    name: Trivy — Dockerfile (misconfig)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Trivy config scan
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: config
+          scan-ref: ${{ env.APP_DIR }}
+          severity: CRITICAL,HIGH
+          exit-code: '1'
+
+  image:
+    name: Trivy — imagem (vulnerabilidades)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Build da imagem
+        run: docker build -t technova-api:scan ${{ env.APP_DIR }}
+
+      - name: Relatório (HIGH e CRITICAL)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: technova-api:scan
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          exit-code: '0'
+
+      # Só falha em CRITICAL com correção disponível
+      - name: Gate (CRITICAL)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: technova-api:scan
+          severity: CRITICAL
+          ignore-unfixed: true
+          exit-code: '1'
