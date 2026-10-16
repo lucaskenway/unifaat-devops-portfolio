@@ -37,7 +37,7 @@ Construir um pipeline completo para o repositório `technova-api` com: criação
 
 - **Credenciais temporárias do Lab:** expiram a cada sessão e o Lab não permite IAM nem OIDC. Por isso o fluxo principal é o script local, e o CI pula o push com aviso (sem quebrar o pipeline) quando os secrets estão ausentes ou vencidos.
 - **Workflows na raiz:** o GitHub só executa workflows de `.github/workflows/` na raiz do repositório. Os arquivos que rodam ficam lá, com o sufixo `-aula09`, para não conflitar com os das outras aulas. `aula-09/.github/` guarda uma cópia de referência com os nomes do enunciado (`ci.yml`, `ai-review.yml`).
-- **Análise por regras em vez de LLM:** o Bedrock no CI exigiria OIDC/role IAM. A análise é determinística (pattern matching), e o prompt para a versão com LLM está documentado em `ia-cicd-analise.md`.
+- **Amazon Bedrock:** a camada de LLM foi implementada no `ai-review.js` (Converse API via AWS CLI, com as credenciais da sessão), mas no Learner Lab nenhum modelo pode ser chamado: os liberados (`claude-3-haiku` do laboratório e outros) estão descontinuados e os atuais dão `AccessDenied`. O review funciona pelas regras, que são as únicas que acionam o gate, e o LLM entra como camada consultiva com fallback automático. O teste com o Bedrock real e com uma resposta simulada está em `ia-cicd-analise.md`.
 
 ---
 

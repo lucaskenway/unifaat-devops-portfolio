@@ -97,6 +97,8 @@ Dispara em `pull_request` (`opened`, `synchronize`, `reopened`): coleta o diff `
 
 Detecta 20 padrões: secrets hardcoded, AWS keys, chaves privadas, `eval()`, `new Function()`, SQL injection, command injection, TLS desabilitado, XSS, CORS `*`, bind em `0.0.0.0`, CIDR `0.0.0.0/0`, `console.log`, catch vazio, `debugger`, `FROM :latest`, `USER root`, `chmod 777`, TODO/FIXME e `var`. Detalhes em [ia-cicd-analise.md](ia-cicd-analise.md).
 
+**Camada opcional de LLM (Amazon Bedrock):** com a variável de repositório `BEDROCK_MODEL_ID` e os secrets da sessão do Lab, o mesmo script também envia o diff ao Bedrock (Converse API) e acrescenta uma seção consultiva "🧠 Análise do LLM" ao comentário. Ela não aciona o gate. Sem acesso ao Bedrock, o review continua só com as regras. No Learner Lab testado, os modelos liberados estão descontinuados e os atuais dão `AccessDenied`; os detalhes estão em [ia-cicd-analise.md](ia-cicd-analise.md#3-lógica-de-análise-e-o-prompt-para-ia).
+
 ### Security Scan — `security-scan-aula09.yml`
 
 `npm audit` (dependências de produção), Trivy config (Dockerfile) e Trivy image (falha em CRITICAL).

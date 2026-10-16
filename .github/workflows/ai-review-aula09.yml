@@ -40,12 +40,37 @@ jobs:
           git diff --name-only "$BASE_SHA...$HEAD_SHA"
           echo "Tamanho do diff: $(wc -l < /tmp/pr-diff.txt) linhas"
 
+      # Opcional: LLM no Amazon Bedrock. Precisa da variável de repositório BEDROCK_MODEL_ID e dos
+      # 3 secrets da sessão do Learner Lab. Sem eles (ou com a sessão vencida) o review usa só as regras.
+      - name: Verificar acesso ao Bedrock (Learner Lab)
+        id: lab
+        env:
+          BEDROCK_MODEL_ID: ${{ vars.BEDROCK_MODEL_ID }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+        run: |
+          if [ -z "$BEDROCK_MODEL_ID" ] || [ -z "$AWS_SESSION_TOKEN" ]; then
+            echo "Bedrock desligado (sem BEDROCK_MODEL_ID ou sem secrets do Lab) — review só por regras"
+            echo "valid=false" >> "$GITHUB_OUTPUT"
+          elif aws sts get-caller-identity --region us-east-1 >/dev/null 2>&1; then
+            echo "valid=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning title=Bedrock::Credenciais do Learner Lab expiradas — review só por regras"
+            echo "valid=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Executar análise de código
         id: analysis
         env:
           DIFF_FILE: /tmp/pr-diff.txt
           REVIEW_OUTPUT: /tmp/ai-review-result.md
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          AWS_REGION: us-east-1
+          BEDROCK_MODEL_ID: ${{ steps.lab.outputs.valid == 'true' && vars.BEDROCK_MODEL_ID || '' }}
+          AWS_ACCESS_KEY_ID: ${{ steps.lab.outputs.valid == 'true' && secrets.AWS_ACCESS_KEY_ID || '' }}
+          AWS_SECRET_ACCESS_KEY: ${{ steps.lab.outputs.valid == 'true' && secrets.AWS_SECRET_ACCESS_KEY || '' }}
+          AWS_SESSION_TOKEN: ${{ steps.lab.outputs.valid == 'true' && secrets.AWS_SESSION_TOKEN || '' }}
         run: node .github/scripts/ai-review.js
 
       # Atualiza o comentário existente em vez de criar um novo a cada push no PR

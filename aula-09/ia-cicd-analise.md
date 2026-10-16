@@ -107,33 +107,66 @@ PR aberto/atualizado
   → Quality gate: CRITICAL > 0 → exit 1
 ```
 
-A implementação atual é **determinística** (regras/regex), equivalente à "Opção A" do laboratório: não tem custo por token, roda em qualquer fork e dá o mesmo resultado para o mesmo diff. O ponto de extensão para um LLM (Bedrock) é trocar o `analyzeDiff()` por uma chamada ao modelo, mantendo o mesmo formato de saída (lista de achados com severidade), para que comentário e quality gate continuem iguais.
+O review tem **duas camadas**:
 
-### Prompt para a versão com LLM (Bedrock / Claude)
+1. **Regras (sempre ligadas):** determinísticas (regex), equivalentes à "Opção A" do laboratório. Não têm custo por token, rodam em qualquer fork e dão o mesmo resultado para o mesmo diff. **Só elas acionam o quality gate.**
+2. **LLM no Amazon Bedrock (opcional, "Opção B" implementada):** quando `BEDROCK_MODEL_ID` está definido, o mesmo `ai-review.js` envia o diff ao modelo pela **Converse API** (`aws bedrock-runtime converse`, com as credenciais da sessão do Lab) e acrescenta uma seção "🧠 Análise do LLM" ao comentário. Esses achados são **consultivos**. Se o Bedrock falhar (sem permissão, modelo descontinuado, sessão vencida, timeout ou resposta fora do formato), o review continua só com as regras e o comentário diz por quê.
 
-```text
-Você é um revisor de código sênior da TechNova (API Node.js/Express em container).
-Analise SOMENTE as linhas adicionadas (+) do diff abaixo.
+Por que o LLM não bloqueia o PR: ele é não determinístico, então o mesmo diff pode dar resultados diferentes, e um gate que oscila entre execuções perde a confiança do time. O LLM complementa as regras com problemas de contexto (lógica, performance, nomes ruins), e quem decide sobre um CRITICAL apontado por ele é um humano.
 
-Classifique cada achado em exatamente uma severidade:
-- CRITICAL: vulnerabilidade explorável ou vazamento de credencial
-  (secret hardcoded, injection SQL/comando, eval, TLS desabilitado).
-- WARNING: problema de qualidade ou hardening que deve ser corrigido
-  (catch vazio, console.log, XSS sink, container como root, CORS *).
-- INFO: sugestão opcional de manutenção/estilo.
-
-Regras:
-- Não invente achados: se não houver evidência na linha, não reporte.
-- Nunca repita o valor de um secret; descreva-o como "<redacted>".
-- Para cada achado informe: arquivo, linha, severidade, problema, correção sugerida.
-- Responda APENAS com JSON:
-  {"findings":[{"file":"","line":0,"severity":"","message":"","fix":""}]}
-
-Diff:
-<<<DIFF (truncado em ~10.000 caracteres)>>>
+```bash
+# Local, com as credenciais do Lab em ~/.aws/credentials
+git diff main...HEAD > /tmp/pr-diff.txt
+BEDROCK_MODEL_ID=<model-id liberado na conta> DIFF_FILE=/tmp/pr-diff.txt \
+  node .github/scripts/ai-review.js
 ```
 
-Pedir **JSON estruturado** (e não Markdown livre) é o que permite manter o quality gate automático: o pipeline conta os `CRITICAL` em vez de interpretar texto.
+No CI (`ai-review-aula09.yml`), o modo Bedrock liga quando existem a variável de repositório `BEDROCK_MODEL_ID` e os 3 secrets da sessão do Lab. Caso contrário, o step registra "Bedrock desligado" e segue só com as regras.
+
+**Proteções do envio:** Access Keys (`AKIA…`/`ASIA…`) e chaves privadas são removidas do diff antes de ir para o modelo, o diff é truncado em 12.000 caracteres (custo e limite de contexto), `temperature: 0` reduz a variação e a mensagem de erro publicada no PR não mostra ARN nem Account ID.
+
+### Resultado do teste no Learner Lab (2026-10-15)
+
+| Modelo | Resultado |
+|--------|-----------|
+| `anthropic.claude-3-haiku-20240307-v1:0` (o do laboratório) | `ResourceNotFoundException`: *model version has reached the end of its life* |
+| `anthropic.claude-3-5-sonnet-20241022-v2:0`, `us.anthropic.claude-3-7-sonnet…`, `us.anthropic.claude-sonnet-4…` | descontinuados (*end of its life*) |
+| `us.anthropic.claude-haiku-4-5…`, `claude-sonnet-4-5`, `amazon.nova-micro/lite/pro`, `meta.llama3…`, `mistral…` | `AccessDeniedException`: a role `voclabs` não tem `bedrock:InvokeModel` para eles |
+| `bedrock:ListFoundationModels` / `ListInferenceProfiles` | `AccessDeniedException` |
+
+Nesta conta do Lab, os modelos que a política libera foram descontinuados pela AWS, e os modelos atuais não estão liberados. Por isso a integração foi validada assim:
+
+- **Chamada real ao Bedrock:** o erro de permissão é tratado e o review cai no fallback (evidência registrada).
+- **Resposta simulada do modelo** (um `aws` falso no `PATH` devolvendo o JSON da Converse API): o parse, o filtro de severidades inválidas e a tabela do comentário funcionam.
+
+Basta definir um `BEDROCK_MODEL_ID` liberado (ex.: numa conta AWS própria) para a camada de LLM funcionar sem mudar código.
+
+### Prompt enviado ao Bedrock
+
+**System:**
+
+```text
+Você é um revisor de código sênior da TechNova (API Node.js/Express, Docker, Terraform).
+Analise SOMENTE as linhas adicionadas (prefixo +) do diff. Seja objetivo e não invente problemas:
+se não houver achados, responda []. Responda APENAS com um array JSON, sem texto fora dele.
+```
+
+**User:**
+
+~~~text
+Classifique cada achado como CRITICAL (vulnerabilidade explorável ou credencial exposta),
+WARNING (bug provável, má prática, performance, hardening) ou INFO (sugestão).
+Formato de cada item: {"file": "caminho", "line": <número da linha no arquivo novo>,
+"severity": "CRITICAL|WARNING|INFO", "category": "Segurança|Qualidade|Performance|Manutenção",
+"message": "problema e correção sugerida, em português, até 160 caracteres"}.
+
+Diff do PR (truncado em 12000 caracteres):
+```diff
+<diff>
+```
+~~~
+
+Pedir **JSON estruturado**, e não Markdown livre, é o que permite tratar a resposta como dados. O script valida cada item (severidade conhecida, `message` presente, no máximo 30 achados) e descarta o resto. Se o modelo responder fora do formato, cai no fallback.
 
 ---
 
