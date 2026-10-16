@@ -75,7 +75,7 @@ done
 
 echo "==> Tags publicadas no ECR:"
 aws ecr describe-images --repository-name "$REPO" --region "$REGION" \
-  --query "sort_by(imageDetails,&imagePushedAt)[].{Tags:join(', ',imageTags||['<untagged>']),Pushed:imagePushedAt,MB:to_string(imageSizeInBytes)}" \
+  --query "sort_by(imageDetails,&imagePushedAt)[].{Tags:join(', ',imageTags||['<untagged>']),Pushed:imagePushedAt,Bytes:imageSizeInBytes}" \
   --output table
 
 echo
