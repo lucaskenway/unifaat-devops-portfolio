@@ -1,0 +1,26 @@
+===== EVIDÊNCIA #007 — PORT=3009 ecr-rollback.sh 1.0.0: pull do ECR, run e health check =====
+Comando:            env PORT=3009 ./ecr-rollback.sh 1.0.0
+Shell:              direto
+Diretório:          /mnt/c/Users/lucas/unifaat-devops-portfolio/aula-09/technova-api
+Ambiente:           WSL (Ubuntu) Ubuntu 26.04 LTS | usuário lucaskenway | host DESKTOP-AMJ5UEC
+Início:             2026-10-15T21:18:59.839-03:00
+Fim:                2026-10-15T21:19:07.602-03:00
+Duração:            7.764 s
+Código de retorno:  0 (sucesso)
+Dados sensíveis:    nenhum detectado
+Origem:             saída capturada diretamente do processo pela ferramenta evidencia 0.1.0
+
+----- SAÍDA (stdout e stderr intercalados, na ordem em que chegaram) -----
+==> Login no ECR...
+Login Succeeded
+==> Pull 844303000847.dkr.ecr.us-east-1.amazonaws.com/technova-api:1.0.0
+1.0.0: Pulling from technova-api
+Digest: sha256:488caadc3122ecf25d40215f4c05d75de466921482cadb37c6d6c161935192ff
+Status: Downloaded newer image for 844303000847.dkr.ecr.us-east-1.amazonaws.com/technova-api:1.0.0
+844303000847.dkr.ecr.us-east-1.amazonaws.com/technova-api:1.0.0
+==> Substituindo o container technova-prod
+{"status":"ok","timestamp":"2026-10-16T00:19:07.506Z","version":"1.0.0"}
+✅ technova-prod rodando 844303000847.dkr.ecr.us-east-1.amazonaws.com/technova-api:1.0.0
+digest: 844303000847.dkr.ecr.us-east-1.amazonaws.com/technova-api@sha256:488caadc3122ecf25d40215f4c05d75de466921482cadb37c6d6c161935192ff
+
+----- FIM -----

@@ -1,0 +1,16 @@
+===== EVIDÊNCIA #008 — npm audit das dependencias de producao =====
+Comando:            cd aula-09/technova-api && npm audit --omit=dev --audit-level=critical
+Shell:              bash
+Diretório:          /mnt/c/Users/lucas/unifaat-devops-portfolio
+Ambiente:           WSL (Ubuntu) Ubuntu 26.04 LTS | usuário lucaskenway | host DESKTOP-AMJ5UEC
+Início:             2026-10-14T20:16:13.580-03:00
+Fim:                2026-10-14T20:16:15.256-03:00
+Duração:            1.675 s
+Código de retorno:  0 (sucesso)
+Dados sensíveis:    nenhum detectado
+Origem:             saída capturada diretamente do processo pela ferramenta evidencia 0.1.0
+
+----- SAÍDA (stdout e stderr intercalados, na ordem em que chegaram) -----
+found 0 vulnerabilities
+
+----- FIM -----

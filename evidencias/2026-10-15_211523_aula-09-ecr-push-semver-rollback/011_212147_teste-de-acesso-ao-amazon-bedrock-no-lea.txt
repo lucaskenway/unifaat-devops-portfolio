@@ -1,0 +1,24 @@
+===== EVIDÊNCIA #011 — Teste de acesso ao Amazon Bedrock no Learner Lab (Converse) =====
+Comando:            bash -c 'for m in anthropic.claude-3-haiku-20240307-v1:0 us.anthropic.claude-haiku-4-5-20251001-v1:0 amazon.nova-micro-v1:0; do echo "== $m"; aws bedrock-runtime converse --region us-east-1 --model-id "$m" --messages "[{\"role\":\"user\",\"content\":[{\"text\":\"ok\"}]}]" --inference-config "{\"maxTokens\":5}" 2>&1 | sed "s/.*operation: //"; done; true'
+Shell:              direto
+Diretório:          /mnt/c/Users/lucas/unifaat-devops-portfolio/aula-09/technova-api
+Ambiente:           WSL (Ubuntu) Ubuntu 26.04 LTS | usuário lucaskenway | host DESKTOP-AMJ5UEC
+Início:             2026-10-15T21:21:47.921-03:00
+Fim:                2026-10-15T21:21:52.305-03:00
+Duração:            4.382 s
+Código de retorno:  0 (sucesso)
+Dados sensíveis:    nenhum detectado
+Origem:             saída capturada diretamente do processo pela ferramenta evidencia 0.1.0
+
+----- SAÍDA (stdout e stderr intercalados, na ordem em que chegaram) -----
+== anthropic.claude-3-haiku-20240307-v1:0
+
+This model version has reached the end of its life. Please refer to the AWS documentation for more details.
+== us.anthropic.claude-haiku-4-5-20251001-v1:0
+
+User: arn:aws:sts::844303000847:assumed-role/voclabs/user5367760=weslley_lucas_souza_alves is not authorized to perform: bedrock:InvokeModel on resource: arn:aws:bedrock:us-east-1:844303000847:inference-profile/us.anthropic.claude-haiku-4-5-20251001-v1:0 because no identity-based policy allows the bedrock:InvokeModel action
+== amazon.nova-micro-v1:0
+
+User: arn:aws:sts::844303000847:assumed-role/voclabs/user5367760=weslley_lucas_souza_alves is not authorized to perform: bedrock:InvokeModel on resource: arn:aws:bedrock:us-east-1::foundation-model/amazon.nova-micro-v1:0 because no identity-based policy allows the bedrock:InvokeModel action
+
+----- FIM -----

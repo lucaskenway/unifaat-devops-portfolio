@@ -1,0 +1,17 @@
+===== EVIDÊNCIA #010 — Versao no ar = HEAD da main remota (corrige o #009, que usou origin/main local desatualizado) =====
+Comando:            bash -c 'git fetch -q origin; git log -1 --format='"'"'main = %H'"'"' origin/main; curl -s http://100.57.3.69:3000/version; echo'
+Shell:              direto
+Diretório:          /mnt/c/Users/lucas/unifaat-devops-portfolio
+Ambiente:           WSL (Ubuntu) Ubuntu 26.04 LTS | usuário lucaskenway | host DESKTOP-AMJ5UEC
+Início:             2026-10-23T11:53:55.417-03:00
+Fim:                2026-10-23T11:53:58.912-03:00
+Duração:            3.495 s
+Código de retorno:  0 (sucesso)
+Dados sensíveis:    nenhum detectado
+Origem:             saída capturada diretamente do processo pela ferramenta evidencia 0.1.0
+
+----- SAÍDA (stdout e stderr intercalados, na ordem em que chegaram) -----
+main = dccfde1aa2176dd622f47b4a5a0b460f97a7f737
+{"version":"1.1.0","commit":"dccfde1aa2176dd622f47b4a5a0b460f97a7f737","deployedAt":"2026-10-23T14:53:48Z"}
+
+----- FIM -----

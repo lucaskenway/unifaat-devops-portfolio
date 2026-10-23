@@ -164,7 +164,11 @@ Para o check bloquear o botão de merge: *Settings → Branches → Add rule (ma
 
 | Arquivo | Evidência |
 |---------|-----------|
-| `screenshots/ecr-console.png` | Repositório `technova-api` no console do ECR com as tags `sha-`, `latest` e semver |
-| `screenshots/ecr-push-ok.png` | Execução do `ecr-push.sh` concluída |
-| `screenshots/ai-review-comment.png` | Comentário do AI review no PR com os achados |
-| `screenshots/quality-gate-block.png` | PR com check `AI Review` falhando por CRITICAL |
+| [`screenshots/ecr-push-ok.png`](screenshots/ecr-push-ok.png) | `ecr-push.sh` concluído com `1.0.0`, `1.0`, `1`, `latest` e `sha-` (Learner Lab, 2026-10-15, imagem renderizada do log real) |
+| [`screenshots/ecr-tags.png`](screenshots/ecr-tags.png) | Repositório `technova-api` no ECR (scan on push ativo) com as tags `sha-XXXXXXX` + `latest` publicadas pelos pipelines (conta atual do Lab, 2026-10-23, imagem renderizada do `aws ecr describe-images`) |
+| [`screenshots/ai-review-comment.png`](screenshots/ai-review-comment.png) | Comentário do AI review no [PR #10](https://github.com/lucaskenway/unifaat-devops-portfolio/pull/10) com 2 CRITICAL, 1 WARNING e 1 INFO |
+| [`screenshots/quality-gate-block.png`](screenshots/quality-gate-block.png) | Check `AI Review` falhando: "Quality gate — 2 achado(s) CRITICAL — PR bloqueado" ([run 39976721102](https://github.com/lucaskenway/unifaat-devops-portfolio/actions/runs/39976721102)) |
+
+O PR #10 era só de demonstração (código inseguro proposital) e foi fechado sem merge. CI verde na `main`: [run 39971991882](https://github.com/lucaskenway/unifaat-devops-portfolio/actions/runs/39971991882). Logs completos (TXT + PNG com SHA-256) em [`evidencias/`](../evidencias/).
+
+> O console do ECR exige login no AWS Academy; por isso as tags são comprovadas pelo `aws ecr describe-images` registrado com a ferramenta `evidencia` (a imagem traz a faixa "renderizada" e o hash do TXT de origem).

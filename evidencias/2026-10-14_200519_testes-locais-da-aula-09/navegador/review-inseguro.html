@@ -1,0 +1,98 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>AI Review — PR inseguro (prévia local)</title>
+<style>
+body{margin:0;background:#f6f8fa;font:14px/1.5 -apple-system,"Segoe UI",Helvetica,Arial,sans-serif;color:#1f2328}
+.banner{background:#fff8c5;border-bottom:1px solid #d4a72c;padding:8px 24px;font-size:13px}
+.wrap{max-width:1100px;margin:24px auto;padding:0 16px}
+.card{background:#fff;border:1px solid #d0d7de;border-radius:6px}
+.head{background:#f6f8fa;border-bottom:1px solid #d0d7de;padding:8px 16px;border-radius:6px 6px 0 0;color:#59636e}
+.head b{color:#1f2328}.body{padding:16px 24px}
+table{border-collapse:collapse;margin:12px 0;display:block;overflow:auto}
+th,td{border:1px solid #d0d7de;padding:6px 12px}tr:nth-child(2n){background:#f6f8fa}
+code{background:#eff1f3;border-radius:4px;padding:.15em .35em;font:12px ui-monospace,Consolas,monospace}
+blockquote{margin:0;padding:0 1em;color:#59636e;border-left:.25em solid #d0d7de}
+h2{border-bottom:1px solid #d0d7de;padding-bottom:.3em}
+</style></head><body>
+<div class="banner">⚠️ <b>Pré-visualização local</b> — Markdown gerado por <code>.github/scripts/ai-review.js</code> sobre <code>aula-09/exemplos/pr-inseguro.diff</code>, renderizado em HTML. <b>Não é uma captura do GitHub.</b></div>
+<div class="wrap"><div class="card"><div class="head"><b>github-actions</b> (bot) — comentário que o workflow <code>ai-review-aula09.yml</code> posta no PR</div>
+<div class="body"><!-- technova-ai-review -->
+<h2>🤖 AI Code Review — TechNova</h2>
+<p><strong>Resumo:</strong> 5 achado(s)</p>
+<table>
+<thead>
+<tr>
+<th align="left">Severidade</th>
+<th align="center">Quantidade</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">🔴 CRITICAL</td>
+<td align="center">3</td>
+</tr>
+<tr>
+<td align="left">🟡 WARNING</td>
+<td align="center">2</td>
+</tr>
+<tr>
+<td align="left">🔵 INFO</td>
+<td align="center">0</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>⛔ <strong>Quality gate: BLOQUEADO.</strong> Corrija os achados CRITICAL antes do merge.</p>
+</blockquote>
+<h3>Achados</h3>
+<table>
+<thead>
+<tr>
+<th align="center">Severidade</th>
+<th>Categoria</th>
+<th>Arquivo</th>
+<th align="center">Linha</th>
+<th>Problema</th>
+<th>Código</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">🔴 CRITICAL</td>
+<td>Segurança</td>
+<td><code>aula-09/technova-api/orders-report.js</code></td>
+<td align="center">1</td>
+<td>Possível secret/credencial hardcoded — use variável de ambiente ou GitHub Secrets</td>
+<td><code>const dbPassword = &#39;Su****&#39;;</code></td>
+</tr>
+<tr>
+<td align="center">🔴 CRITICAL</td>
+<td>Segurança</td>
+<td><code>aula-09/technova-api/orders-report.js</code></td>
+<td align="center">7</td>
+<td>Possível SQL injection — SQL montado por concatenação; use query parametrizada</td>
+<td><code>return db.query(&#39;SELECT * FROM orders WHERE id ...</code></td>
+</tr>
+<tr>
+<td align="center">🔴 CRITICAL</td>
+<td>Segurança</td>
+<td><code>aula-09/technova-api/orders-report.js</code></td>
+<td align="center">9</td>
+<td>Uso de eval() — risco de code injection</td>
+<td><code>return eval(req.query.expr);</code></td>
+</tr>
+<tr>
+<td align="center">🟡 WARNING</td>
+<td>Qualidade</td>
+<td><code>aula-09/technova-api/orders-report.js</code></td>
+<td align="center">5</td>
+<td>console.log em código de produção — remova ou use um logger</td>
+<td><code>console.log(&#39;debug&#39;, req.query);</code></td>
+</tr>
+<tr>
+<td align="center">🟡 WARNING</td>
+<td>Qualidade</td>
+<td><code>aula-09/technova-api/orders-report.js</code></td>
+<td align="center">8</td>
+<td>catch vazio — erros silenciados escondem bugs</td>
+<td><code>} catch (e) {}</code></td>
+</tr>
+</tbody></table>
+<hr>
+<p><em>Review automatizado (18 regras) · complementa, mas não substitui, o review humano.</em>
+<em>⚠️ Falsos positivos são possíveis — para suprimir um achado legítimo, use <code>ai-review-ignore</code> na linha.</em></p></div></div></div></body></html>

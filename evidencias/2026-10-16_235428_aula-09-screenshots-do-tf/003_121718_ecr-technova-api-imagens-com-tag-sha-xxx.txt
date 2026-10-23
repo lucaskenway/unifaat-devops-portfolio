@@ -1,0 +1,24 @@
+===== EVIDÊNCIA #003 — ECR technova-api: imagens com tag (sha-XXXXXXX por commit + latest), scan on push ativo =====
+Comando:            bash -c 'aws ecr describe-repositories --repository-names technova-api --query '"'"'repositories[0].[repositoryUri,imageScanningConfiguration.scanOnPush]'"'"' --output text; aws ecr describe-images --repository-name technova-api --filter tagStatus=TAGGED --query '"'"'sort_by(imageDetails,&imagePushedAt)[].[imagePushedAt,join(`,`,imageTags),imageSizeInBytes]'"'"' --output table'
+Shell:              direto
+Diretório:          /mnt/c/Users/lucas/unifaat-devops-portfolio
+Ambiente:           WSL (Ubuntu) Ubuntu 26.04 LTS | usuário lucaskenway | host DESKTOP-AMJ5UEC
+Início:             2026-10-23T12:17:18.325-03:00
+Fim:                2026-10-23T12:17:22.084-03:00
+Duração:            3.759 s
+Código de retorno:  0 (sucesso)
+Dados sensíveis:    nenhum detectado
+Origem:             saída capturada diretamente do processo pela ferramenta evidencia 0.1.0
+
+----- SAÍDA (stdout e stderr intercalados, na ordem em que chegaram) -----
+721003528272.dkr.ecr.us-east-1.amazonaws.com/technova-api	True
+------------------------------------------------------------------------
+|                            DescribeImages                            |
++-----------------------------------+----------------------+-----------+
+|  2026-10-23T11:35:26.007000-03:00 |  sha-fcafb0e         |  52410324 |
+|  2026-10-23T11:43:54.851000-03:00 |  sha-abd19a4         |  52410502 |
+|  2026-10-23T11:44:09.823000-03:00 |  sha-ff6c9b6         |  52410324 |
+|  2026-10-23T11:53:31.491000-03:00 |  latest,sha-dccfde1  |  52410502 |
++-----------------------------------+----------------------+-----------+
+
+----- FIM -----

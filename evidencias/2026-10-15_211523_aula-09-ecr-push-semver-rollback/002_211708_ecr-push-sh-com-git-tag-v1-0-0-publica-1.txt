@@ -1,0 +1,431 @@
+===== EVIDÊNCIA #002 — ecr-push.sh com git tag v1.0.0: publica 1.0.0, 1.0, 1, sha e latest =====
+Comando:            ./ecr-push.sh
+Shell:              bash
+Diretório:          /mnt/c/Users/lucas/unifaat-devops-portfolio/aula-09/technova-api
+Ambiente:           WSL (Ubuntu) Ubuntu 26.04 LTS | usuário lucaskenway | host DESKTOP-AMJ5UEC
+Início:             2026-10-15T21:17:08.873-03:00
+Fim:                2026-10-15T21:17:35.181-03:00
+Duração:            26.308 s
+Código de retorno:  0 (sucesso)
+Dados sensíveis:    nenhum detectado
+Origem:             saída capturada diretamente do processo pela ferramenta evidencia 0.1.0
+
+----- SAÍDA (stdout e stderr intercalados, na ordem em que chegaram) -----
+==> Validando a sessão do Learner Lab...
+==> Garantindo o repositório ECR (technova-api em us-east-1)...
+==> Login no ECR...
+Login Succeeded
+==> Build (sha-7317d71)...
+failed to fetch metadata: fork/exec /usr/local/lib/docker/cli-plugins/docker-buildx: input/output error
+
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+Sending build context to Docker daemon  201.7kB
+Step 1/18 : FROM node:20-alpine AS builder
+ ---> fb4cd12c85ee
+Step 2/18 : WORKDIR /app
+ ---> Using cache
+ ---> 68b6cbe9d51c
+Step 3/18 : COPY package*.json ./
+ ---> Using cache
+ ---> 79bf22b2c294
+Step 4/18 : RUN npm ci --omit=dev && npm cache clean --force
+ ---> Using cache
+ ---> 6a1e8b714085
+Step 5/18 : FROM node:20-alpine AS runtime
+ ---> fb4cd12c85ee
+Step 6/18 : LABEL org.opencontainers.image.source="https://github.com/lucaskenway/unifaat-devops-portfolio"
+ ---> Using cache
+ ---> ff90f3409d3a
+Step 7/18 : LABEL org.opencontainers.image.description="TechNova API - Sistema de gestão de pedidos"
+ ---> Using cache
+ ---> b44861ed4f59
+Step 8/18 : ENV NODE_ENV=production
+ ---> Using cache
+ ---> 6225c5866ad0
+Step 9/18 : WORKDIR /app
+ ---> Using cache
+ ---> a862416ec1c1
+Step 10/18 : RUN apk upgrade --no-cache &&     rm -rf /usr/local/lib/node_modules /usr/local/bin/npm /usr/local/bin/npx            /usr/local/bin/corepack /opt/yarn* /usr/local/bin/yarn /usr/local/bin/yarnpkg &&     addgroup -g 1001 -S nodejs &&     adduser -S technova -u 1001 -G nodejs
+ ---> Using cache
+ ---> 3af6933d6784
+Step 11/18 : COPY --from=builder --chown=technova:nodejs /app/node_modules ./node_modules
+ ---> Using cache
+ ---> 380fad94bc85
+Step 12/18 : COPY --chown=technova:nodejs package.json server.js ./
+ ---> Using cache
+ ---> 7173010b3226
+Step 13/18 : USER technova
+ ---> Using cache
+ ---> 0e484a3e3d52
+Step 14/18 : EXPOSE 3000
+ ---> Using cache
+ ---> b1ccf03c3688
+Step 15/18 : HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3   CMD wget --no-verbose --tries=1 --spider http://localhost:3000/health || exit 1
+ ---> Using cache
+ ---> 5a6c3fc2b234
+Step 16/18 : CMD ["node", "server.js"]
+ ---> Using cache
+ ---> 585d6aa3d127
+Step 17/18 : LABEL org.opencontainers.image.revision=7317d71098516908f2074838adb6414706d5d9d7
+ ---> Running in 8c093afa3d58
+ ---> Removed intermediate container 8c093afa3d58
+ ---> 3227cf883565
+Step 18/18 : LABEL org.opencontainers.image.version=1.0.0
+ ---> Running in c61db94f5750
+ ---> Removed intermediate container c61db94f5750
+ ---> 488caadc3122
+Successfully built 488caadc3122
+Successfully tagged technova-api:local
+==> Tag e push: sha-7317d71 latest 1.0.0 1.0 1
+The push refers to repository [844303000847.dkr.ecr.us-east-1.amazonaws.com/technova-api]
+9542d5208d69: Waiting
+6a0ac1617861: Waiting
+fff4e2c1b189: Waiting
+8216c3ccefa0: Waiting
+4feea04c1543: Waiting
+011f247e3cf3: Waiting
+367bd5ec3cf7: Waiting
+b2cbbfe903b0: Waiting
+6a0ac1617861: Waiting
+fff4e2c1b189: Waiting
+8216c3ccefa0: Waiting
+4feea04c1543: Waiting
+011f247e3cf3: Waiting
+367bd5ec3cf7: Waiting
+b2cbbfe903b0: Waiting
+9542d5208d69: Waiting
+b2cbbfe903b0: Waiting
+9542d5208d69: Waiting
+6a0ac1617861: Waiting
+fff4e2c1b189: Waiting
+8216c3ccefa0: Waiting
+4feea04c1543: Waiting
+011f247e3cf3: Waiting
+367bd5ec3cf7: Waiting
+6a0ac1617861: Waiting
+fff4e2c1b189: Waiting
+8216c3ccefa0: Waiting
+4feea04c1543: Waiting
+011f247e3cf3: Waiting
+367bd5ec3cf7: Waiting
+b2cbbfe903b0: Waiting
+9542d5208d69: Waiting
+011f247e3cf3: Waiting
+367bd5ec3cf7: Waiting
+b2cbbfe903b0: Waiting
+9542d5208d69: Waiting
+6a0ac1617861: Waiting
+fff4e2c1b189: Waiting
+8216c3ccefa0: Waiting
+4feea04c1543: Waiting
+9542d5208d69: Waiting
+6a0ac1617861: Waiting
+fff4e2c1b189: Waiting
+8216c3ccefa0: Waiting
+4feea04c1543: Waiting
+011f247e3cf3: Waiting
+367bd5ec3cf7: Waiting
+b2cbbfe903b0: Waiting
+4feea04c1543: Waiting
+011f247e3cf3: Waiting
+367bd5ec3cf7: Waiting
+b2cbbfe903b0: Waiting
+9542d5208d69: Waiting
+6a0ac1617861: Waiting
+fff4e2c1b189: Waiting
+8216c3ccefa0: Waiting
+fff4e2c1b189: Waiting
+8216c3ccefa0: Waiting
+4feea04c1543: Waiting
+011f247e3cf3: Waiting
+367bd5ec3cf7: Waiting
+b2cbbfe903b0: Waiting
+9542d5208d69: Waiting
+6a0ac1617861: Waiting
+fff4e2c1b189: Waiting
+8216c3ccefa0: Waiting
+4feea04c1543: Waiting
+011f247e3cf3: Waiting
+367bd5ec3cf7: Waiting
+b2cbbfe903b0: Waiting
+9542d5208d69: Waiting
+6a0ac1617861: Waiting
+6a0ac1617861: Waiting
+fff4e2c1b189: Waiting
+8216c3ccefa0: Waiting
+4feea04c1543: Waiting
+011f247e3cf3: Waiting
+367bd5ec3cf7: Waiting
+b2cbbfe903b0: Waiting
+9542d5208d69: Waiting
+9542d5208d69: Waiting
+6a0ac1617861: Waiting
+fff4e2c1b189: Waiting
+8216c3ccefa0: Waiting
+4feea04c1543: Waiting
+011f247e3cf3: Waiting
+367bd5ec3cf7: Waiting
+b2cbbfe903b0: Waiting
+fff4e2c1b189: Waiting
+8216c3ccefa0: Waiting
+4feea04c1543: Waiting
+011f247e3cf3: Waiting
+367bd5ec3cf7: Waiting
+b2cbbfe903b0: Waiting
+9542d5208d69: Waiting
+6a0ac1617861: Waiting
+b2cbbfe903b0: Layer already exists
+9542d5208d69: Waiting
+6a0ac1617861: Waiting
+fff4e2c1b189: Waiting
+8216c3ccefa0: Waiting
+4feea04c1543: Layer already exists
+011f247e3cf3: Layer already exists
+367bd5ec3cf7: Waiting
+367bd5ec3cf7: Layer already exists
+9542d5208d69: Layer already exists
+6a0ac1617861: Layer already exists
+fff4e2c1b189: Layer already exists
+8216c3ccefa0: Layer already exists
+sha-7317d71: digest: sha256:488caadc3122ecf25d40215f4c05d75de466921482cadb37c6d6c161935192ff size: 2057
+The push refers to repository [844303000847.dkr.ecr.us-east-1.amazonaws.com/technova-api]
+9542d5208d69: Waiting
+6a0ac1617861: Waiting
+fff4e2c1b189: Waiting
+011f247e3cf3: Waiting
+4feea04c1543: Waiting
+8216c3ccefa0: Waiting
+367bd5ec3cf7: Waiting
+b2cbbfe903b0: Waiting
+8216c3ccefa0: Waiting
+367bd5ec3cf7: Waiting
+b2cbbfe903b0: Waiting
+9542d5208d69: Waiting
+6a0ac1617861: Waiting
+fff4e2c1b189: Waiting
+011f247e3cf3: Waiting
+4feea04c1543: Waiting
+9542d5208d69: Waiting
+6a0ac1617861: Waiting
+fff4e2c1b189: Waiting
+011f247e3cf3: Waiting
+4feea04c1543: Waiting
+8216c3ccefa0: Waiting
+367bd5ec3cf7: Waiting
+b2cbbfe903b0: Waiting
+011f247e3cf3: Waiting
+4feea04c1543: Waiting
+8216c3ccefa0: Waiting
+367bd5ec3cf7: Waiting
+b2cbbfe903b0: Waiting
+9542d5208d69: Waiting
+6a0ac1617861: Waiting
+fff4e2c1b189: Waiting
+6a0ac1617861: Waiting
+fff4e2c1b189: Waiting
+011f247e3cf3: Waiting
+4feea04c1543: Waiting
+8216c3ccefa0: Waiting
+367bd5ec3cf7: Waiting
+b2cbbfe903b0: Waiting
+9542d5208d69: Waiting
+fff4e2c1b189: Layer already exists
+011f247e3cf3: Waiting
+4feea04c1543: Waiting
+8216c3ccefa0: Waiting
+367bd5ec3cf7: Layer already exists
+b2cbbfe903b0: Waiting
+9542d5208d69: Waiting
+6a0ac1617861: Layer already exists
+011f247e3cf3: Layer already exists
+4feea04c1543: Layer already exists
+8216c3ccefa0: Layer already exists
+b2cbbfe903b0: Layer already exists
+9542d5208d69: Layer already exists
+latest: digest: sha256:488caadc3122ecf25d40215f4c05d75de466921482cadb37c6d6c161935192ff size: 2057
+The push refers to repository [844303000847.dkr.ecr.us-east-1.amazonaws.com/technova-api]
+367bd5ec3cf7: Waiting
+9542d5208d69: Waiting
+011f247e3cf3: Waiting
+8216c3ccefa0: Waiting
+fff4e2c1b189: Waiting
+6a0ac1617861: Waiting
+4feea04c1543: Waiting
+b2cbbfe903b0: Waiting
+fff4e2c1b189: Waiting
+6a0ac1617861: Waiting
+4feea04c1543: Waiting
+b2cbbfe903b0: Waiting
+367bd5ec3cf7: Waiting
+9542d5208d69: Waiting
+011f247e3cf3: Waiting
+8216c3ccefa0: Waiting
+8216c3ccefa0: Waiting
+fff4e2c1b189: Waiting
+6a0ac1617861: Waiting
+4feea04c1543: Waiting
+b2cbbfe903b0: Waiting
+367bd5ec3cf7: Waiting
+9542d5208d69: Waiting
+011f247e3cf3: Waiting
+9542d5208d69: Waiting
+011f247e3cf3: Waiting
+8216c3ccefa0: Waiting
+fff4e2c1b189: Waiting
+6a0ac1617861: Waiting
+4feea04c1543: Waiting
+b2cbbfe903b0: Waiting
+367bd5ec3cf7: Waiting
+011f247e3cf3: Waiting
+8216c3ccefa0: Waiting
+fff4e2c1b189: Waiting
+6a0ac1617861: Waiting
+4feea04c1543: Waiting
+b2cbbfe903b0: Waiting
+367bd5ec3cf7: Waiting
+9542d5208d69: Waiting
+367bd5ec3cf7: Layer already exists
+9542d5208d69: Layer already exists
+011f247e3cf3: Layer already exists
+8216c3ccefa0: Waiting
+fff4e2c1b189: Layer already exists
+6a0ac1617861: Layer already exists
+4feea04c1543: Waiting
+b2cbbfe903b0: Layer already exists
+4feea04c1543: Layer already exists
+8216c3ccefa0: Layer already exists
+1.0.0: digest: sha256:488caadc3122ecf25d40215f4c05d75de466921482cadb37c6d6c161935192ff size: 2057
+The push refers to repository [844303000847.dkr.ecr.us-east-1.amazonaws.com/technova-api]
+6a0ac1617861: Waiting
+4feea04c1543: Waiting
+b2cbbfe903b0: Waiting
+fff4e2c1b189: Waiting
+9542d5208d69: Waiting
+8216c3ccefa0: Waiting
+367bd5ec3cf7: Waiting
+011f247e3cf3: Waiting
+4feea04c1543: Waiting
+b2cbbfe903b0: Waiting
+fff4e2c1b189: Waiting
+9542d5208d69: Waiting
+8216c3ccefa0: Waiting
+367bd5ec3cf7: Waiting
+011f247e3cf3: Waiting
+6a0ac1617861: Waiting
+b2cbbfe903b0: Waiting
+fff4e2c1b189: Waiting
+9542d5208d69: Waiting
+8216c3ccefa0: Waiting
+367bd5ec3cf7: Waiting
+011f247e3cf3: Waiting
+6a0ac1617861: Waiting
+4feea04c1543: Waiting
+4feea04c1543: Waiting
+b2cbbfe903b0: Waiting
+fff4e2c1b189: Waiting
+9542d5208d69: Waiting
+8216c3ccefa0: Waiting
+367bd5ec3cf7: Waiting
+011f247e3cf3: Waiting
+6a0ac1617861: Waiting
+4feea04c1543: Waiting
+b2cbbfe903b0: Waiting
+fff4e2c1b189: Waiting
+9542d5208d69: Waiting
+8216c3ccefa0: Waiting
+367bd5ec3cf7: Waiting
+011f247e3cf3: Waiting
+6a0ac1617861: Waiting
+011f247e3cf3: Layer already exists
+6a0ac1617861: Layer already exists
+4feea04c1543: Layer already exists
+b2cbbfe903b0: Waiting
+fff4e2c1b189: Layer already exists
+9542d5208d69: Layer already exists
+8216c3ccefa0: Waiting
+367bd5ec3cf7: Waiting
+b2cbbfe903b0: Layer already exists
+8216c3ccefa0: Layer already exists
+367bd5ec3cf7: Layer already exists
+1.0: digest: sha256:488caadc3122ecf25d40215f4c05d75de466921482cadb37c6d6c161935192ff size: 2057
+The push refers to repository [844303000847.dkr.ecr.us-east-1.amazonaws.com/technova-api]
+b2cbbfe903b0: Waiting
+fff4e2c1b189: Waiting
+9542d5208d69: Waiting
+8216c3ccefa0: Waiting
+011f247e3cf3: Waiting
+367bd5ec3cf7: Waiting
+6a0ac1617861: Waiting
+4feea04c1543: Waiting
+4feea04c1543: Waiting
+b2cbbfe903b0: Waiting
+fff4e2c1b189: Waiting
+9542d5208d69: Waiting
+8216c3ccefa0: Waiting
+011f247e3cf3: Waiting
+367bd5ec3cf7: Waiting
+6a0ac1617861: Waiting
+8216c3ccefa0: Waiting
+011f247e3cf3: Waiting
+367bd5ec3cf7: Waiting
+6a0ac1617861: Waiting
+4feea04c1543: Waiting
+b2cbbfe903b0: Waiting
+fff4e2c1b189: Waiting
+9542d5208d69: Waiting
+9542d5208d69: Waiting
+8216c3ccefa0: Waiting
+011f247e3cf3: Waiting
+367bd5ec3cf7: Waiting
+6a0ac1617861: Waiting
+4feea04c1543: Waiting
+b2cbbfe903b0: Waiting
+fff4e2c1b189: Waiting
+6a0ac1617861: Waiting
+4feea04c1543: Waiting
+b2cbbfe903b0: Waiting
+fff4e2c1b189: Waiting
+9542d5208d69: Waiting
+8216c3ccefa0: Waiting
+011f247e3cf3: Waiting
+367bd5ec3cf7: Waiting
+9542d5208d69: Waiting
+8216c3ccefa0: Layer already exists
+011f247e3cf3: Layer already exists
+367bd5ec3cf7: Layer already exists
+6a0ac1617861: Layer already exists
+4feea04c1543: Waiting
+b2cbbfe903b0: Layer already exists
+fff4e2c1b189: Layer already exists
+4feea04c1543: Layer already exists
+9542d5208d69: Layer already exists
+1: digest: sha256:488caadc3122ecf25d40215f4c05d75de466921482cadb37c6d6c161935192ff size: 2057
+==> Tags publicadas no ECR:
+----------------------------------------------------------------------------------------
+|                                    DescribeImages                                    |
++----------+------------------------------------+--------------------------------------+
+|   Bytes  |              Pushed                |                Tags                  |
++----------+------------------------------------+--------------------------------------+
+|  51981258|  2026-10-15T21:16:51.010000-03:00  |  sha-7131e31                         |
+|  51981246|  2026-10-15T21:18:00.594000-03:00  |  1.0.0, 1.0, latest, sha-7317d71, 1  |
++----------+------------------------------------+--------------------------------------+
+
+✅ Pronto! Imagem publicada:
+    844303000847.dkr.ecr.us-east-1.amazonaws.com/technova-api:sha-7317d71
+    844303000847.dkr.ecr.us-east-1.amazonaws.com/technova-api:latest
+    844303000847.dkr.ecr.us-east-1.amazonaws.com/technova-api:1.0.0
+    844303000847.dkr.ecr.us-east-1.amazonaws.com/technova-api:1.0
+    844303000847.dkr.ecr.us-east-1.amazonaws.com/technova-api:1
+
+----- SOMENTE STDERR -----
+failed to fetch metadata: fork/exec /usr/local/lib/docker/cli-plugins/docker-buildx: input/output error
+
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+
+----- FIM -----

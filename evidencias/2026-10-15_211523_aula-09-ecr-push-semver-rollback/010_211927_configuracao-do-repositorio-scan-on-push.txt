@@ -1,0 +1,23 @@
+===== EVIDÊNCIA #010 — Configuracao do repositorio: scan on push e lifecycle policy =====
+Comando:            bash -c 'aws ecr describe-repositories --repository-names technova-api --region us-east-1 --query "repositories[0].{uri:repositoryUri,scanOnPush:imageScanningConfiguration.scanOnPush,mutabilidade:imageTagMutability}" --output table && aws ecr get-lifecycle-policy --repository-name technova-api --region us-east-1 --query lifecyclePolicyText --output text'
+Shell:              direto
+Diretório:          /mnt/c/Users/lucas/unifaat-devops-portfolio/aula-09/technova-api
+Ambiente:           WSL (Ubuntu) Ubuntu 26.04 LTS | usuário lucaskenway | host DESKTOP-AMJ5UEC
+Início:             2026-10-15T21:19:27.289-03:00
+Fim:                2026-10-15T21:19:30.057-03:00
+Duração:            2.768 s
+Código de retorno:  0 (sucesso)
+Dados sensíveis:    nenhum detectado
+Origem:             saída capturada diretamente do processo pela ferramenta evidencia 0.1.0
+
+----- SAÍDA (stdout e stderr intercalados, na ordem em que chegaram) -----
+-------------------------------------------------------------------------------
+|                            DescribeRepositories                             |
++--------------+--------------------------------------------------------------+
+|  mutabilidade|  MUTABLE                                                     |
+|  scanOnPush  |  True                                                        |
+|  uri         |  844303000847.dkr.ecr.us-east-1.amazonaws.com/technova-api   |
++--------------+--------------------------------------------------------------+
+{"rules":[{"rulePriority":1,"description":"Remove imagens sem tag 1 dia depois do push","selection":{"tagStatus":"untagged","countType":"sinceImagePushed","countUnit":"days","countNumber":1},"action":{"type":"expire"}},{"rulePriority":2,"description":"Mantem apenas os 15 builds sha- mais recentes","selection":{"tagStatus":"tagged","tagPatternList":["sha-*"],"countType":"imageCountMoreThan","countNumber":15},"action":{"type":"expire"}}]}
+
+----- FIM -----

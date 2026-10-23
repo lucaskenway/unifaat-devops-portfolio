@@ -1,0 +1,297 @@
+{
+  "versao_formato": 1,
+  "descricao": "aula-10 GitOps e CD",
+  "projeto": "unifaat-devops-portfolio",
+  "raiz_projeto": "C:/Users/lucas/unifaat-devops-portfolio",
+  "inicio": "2026-10-23T11:45:35-03:00",
+  "fim": "2026-10-23T11:53:59-03:00",
+  "ambiente_inicio": {
+    "so": "WSL (Ubuntu) Ubuntu 26.04 LTS",
+    "usuario": "lucaskenway",
+    "host": "DESKTOP-AMJ5UEC",
+    "python": "3.14.4",
+    "terminal": ""
+  },
+  "itens": [
+    {
+      "numero": 1,
+      "tipo": "registro",
+      "descricao": "Log do Terraform Apply (run 39970717413) apos o merge do PR #5",
+      "comando": "bash -c 'gh run view 39970717413 --log | awk -F'\"'\"'\\t'\"'\"' '\"'\"'$2==\"Terraform Apply\" || $2==\"Outputs\"'\"'\"' | sed -E '\"'\"'s/^[^\\t]*\\t//; s/\\t[0-9TZ:.-]+ /  /'\"'\"' | grep -E '\"'\"'Creation complete|Apply complete|= \"'\"'\"' | grep -vE '\"'\"'\\[36;1m|\\+ \"'\"'\"' | head -30'",
+      "shell": "direto",
+      "estilo": "terminal",
+      "cwd": "/mnt/c/Users/lucas/unifaat-devops-portfolio",
+      "inicio": "2026-10-23T11:45:35-03:00",
+      "fim": "2026-10-23T11:45:36-03:00",
+      "duracao_s": 1.4321524890001456,
+      "retorno": 0,
+      "interrompido": false,
+      "redacoes": {},
+      "avisos": [],
+      "arquivos": [
+        {
+          "nome": "001_114535_log-do-terraform-apply-run-39970717413-a.txt",
+          "tipo": "txt",
+          "sha256": "827faa6c3cdd993a7b5b98a5b997aa04d8c54dc6f5dd5477420d272bf1c19735"
+        },
+        {
+          "nome": "001_114535_log-do-terraform-apply-run-39970717413-a_renderizada.png",
+          "tipo": "png-renderizada",
+          "sha256": "ac0b550634b6bba62f90065018c324137adf7b5bf2967a194af6ba1bac55d3b6"
+        }
+      ]
+    },
+    {
+      "numero": 2,
+      "tipo": "registro",
+      "descricao": "Health check e conferencia de /version no job deploy (run 39971130945)",
+      "comando": "bash -c 'gh run view 39971130945 --log | awk -F'\"'\"'\\t'\"'\"' '\"'\"'$2==\"Health Check\" || $2==\"Conferir versão implantada\" || $2==\"Deploy via SSH (Recreate Strategy)\"'\"'\"' | sed -E '\"'\"'s/^[^\\t]*\\t//; s/\\t[0-9TZ:.-]+ /  /'\"'\"' | grep -vE '\"'\"'\\[36;1m|##\\[|DeprecationWarning|url.parse|WARN'\"'\"' | grep -E '\"'\"'🔐|🛑|📦|▶️|✅|⏳|❌|status|version|Login Succeeded|technova-api|Status:'\"'\"' | head -40'",
+      "shell": "direto",
+      "estilo": "terminal",
+      "cwd": "/mnt/c/Users/lucas/unifaat-devops-portfolio",
+      "inicio": "2026-10-23T11:45:37-03:00",
+      "fim": "2026-10-23T11:45:38-03:00",
+      "duracao_s": 1.344146821999857,
+      "retorno": 0,
+      "interrompido": false,
+      "redacoes": {},
+      "avisos": [],
+      "arquivos": [
+        {
+          "nome": "002_114537_health-check-e-conferencia-de-version-no.txt",
+          "tipo": "txt",
+          "sha256": "ad3bc179f6813315d977488247497ec0347063702b7c06cd689f99fbf87ea92b"
+        },
+        {
+          "nome": "002_114537_health-check-e-conferencia-de-version-no_renderizada.png",
+          "tipo": "png-renderizada",
+          "sha256": "6f41a4675f35032bc910cee8dcc4e976d71c380975c51d03ae10ee548c16ee43"
+        }
+      ]
+    },
+    {
+      "numero": 3,
+      "tipo": "registro",
+      "descricao": "Acesso externo a API implantada na EC2",
+      "comando": "bash -c 'curl -s http://100.57.3.69:3000/health; echo; curl -s http://100.57.3.69:3000/version; echo'",
+      "shell": "direto",
+      "estilo": "terminal",
+      "cwd": "/mnt/c/Users/lucas/unifaat-devops-portfolio",
+      "inicio": "2026-10-23T11:45:39-03:00",
+      "fim": "2026-10-23T11:45:40-03:00",
+      "duracao_s": 0.762404535999849,
+      "retorno": 0,
+      "interrompido": false,
+      "redacoes": {},
+      "avisos": [],
+      "arquivos": [
+        {
+          "nome": "003_114539_acesso-externo-a-api-implantada-na-ec2.txt",
+          "tipo": "txt",
+          "sha256": "061af51a655a70e9c78992dde74ea83499c8d9782b6ffab4a7a0a3184d8c0d04"
+        },
+        {
+          "nome": "003_114539_acesso-externo-a-api-implantada-na-ec2_renderizada.png",
+          "tipo": "png-renderizada",
+          "sha256": "6ab868f4ee1d9e4511f0058e5aad902a28b01f6740c5c589b51b0581b8b845a3"
+        }
+      ]
+    },
+    {
+      "numero": 4,
+      "tipo": "registro",
+      "descricao": "Terraform Apply apos merge do PR #5: recursos criados e outputs (run 39970717413)",
+      "comando": "bash -c 'gh run view 39970717413 --log | awk -F'\"'\"'\\t'\"'\"' '\"'\"'$2==\"Terraform Apply\" || $2==\"Outputs\"'\"'\"' | sed -E '\"'\"'s/^[^\\t]*\\t//; s/\\t[0-9TZ:.-]+ /  /'\"'\"' | grep -E '\"'\"'^[^\\t]+  [^ ]'\"'\"' | grep -E '\"'\"'Creation complete|Apply complete|^Outputs  [a-z_]+ = '\"'\"' | sort -u -t'\"'\"'|'\"'\"' -k1,1 | head -30'",
+      "shell": "direto",
+      "estilo": "terminal",
+      "cwd": "/mnt/c/Users/lucas/unifaat-devops-portfolio",
+      "inicio": "2026-10-23T11:45:59-03:00",
+      "fim": "2026-10-23T11:46:01-03:00",
+      "duracao_s": 1.7660760349999691,
+      "retorno": 0,
+      "interrompido": false,
+      "redacoes": {},
+      "avisos": [],
+      "arquivos": [
+        {
+          "nome": "004_114559_terraform-apply-apos-merge-do-pr-5-recur.txt",
+          "tipo": "txt",
+          "sha256": "f0fa80c06a3669d5b69bfe980724955a767df0090f8d31fc8815504684b47135"
+        },
+        {
+          "nome": "004_114559_terraform-apply-apos-merge-do-pr-5-recur_renderizada.png",
+          "tipo": "png-renderizada",
+          "sha256": "39ff6342fc2740893eebf430b1ea2b96ff3ed48f8b648ced398ad33e9f09451d"
+        }
+      ]
+    },
+    {
+      "numero": 5,
+      "tipo": "registro",
+      "descricao": "Deploy Recreate via SSH + health check + /version (run 39971130945)",
+      "comando": "bash -c 'gh run view 39971130945 --log | awk -F'\"'\"'\\t'\"'\"' '\"'\"'$2==\"Deploy via SSH (Recreate Strategy)\" || $2==\"Health Check\" || $2==\"Conferir versão implantada\"'\"'\"' | sed -E '\"'\"'s/^[^\\t]*\\t//; s/\\t[0-9TZ:.-]+ /  /'\"'\"' | grep -E '\"'\"'^[^\\t]+  [^ ]'\"'\"' | grep -vE '\"'\"'Drone SSH|Successfully executed|^[^ ]+( [^ ]+)*  [a-f0-9]{12}: |Digest:|Pulling fs|Download|Verifying|Pull complete|Waiting'\"'\"''",
+      "shell": "direto",
+      "estilo": "terminal",
+      "cwd": "/mnt/c/Users/lucas/unifaat-devops-portfolio",
+      "inicio": "2026-10-23T11:46:02-03:00",
+      "fim": "2026-10-23T11:46:03-03:00",
+      "duracao_s": 1.3535808850001558,
+      "retorno": 1,
+      "interrompido": false,
+      "redacoes": {},
+      "avisos": [],
+      "arquivos": [
+        {
+          "nome": "005_114602_deploy-recreate-via-ssh-health-check-ver.txt",
+          "tipo": "txt",
+          "sha256": "e017fc819a461a4b2295a047df6380ac16268ac1d8f690f6c13741addbd691f4"
+        },
+        {
+          "nome": "005_114602_deploy-recreate-via-ssh-health-check-ver_renderizada.png",
+          "tipo": "png-renderizada",
+          "sha256": "0e28bbcb08d1a04012f063babb105d392a35dec38c749c78f88b21f2ae433bf9"
+        }
+      ]
+    },
+    {
+      "numero": 6,
+      "tipo": "registro",
+      "descricao": "Deploy Recreate via SSH + health check + /version (run 39971130945)",
+      "comando": "bash -c 'gh run view 39971130945 --log | awk -F'\"'\"'\\t'\"'\"' '\"'\"'$2==\"Deploy via SSH (Recreate Strategy)\" || $2==\"Health Check\" || $2==\"Conferir versão implantada\"'\"'\"' | sed -E '\"'\"'s/^[^\\t]*\\t//; s/\\t[0-9TZ:.-]+ /  /'\"'\"' | grep -E '\"'\"'\\)  [^ ]|Check  [^ ]|implantada  [^ ]'\"'\"' | grep -vE '\"'\"'Drone SSH|Successfully executed|  [a-f0-9]{12}: |Digest:|Pull complete|Waiting|Verifying|Download complete'\"'\"''",
+      "shell": "direto",
+      "estilo": "terminal",
+      "cwd": "/mnt/c/Users/lucas/unifaat-devops-portfolio",
+      "inicio": "2026-10-23T11:46:15-03:00",
+      "fim": "2026-10-23T11:46:16-03:00",
+      "duracao_s": 1.4090024150000318,
+      "retorno": 0,
+      "interrompido": false,
+      "redacoes": {},
+      "avisos": [],
+      "arquivos": [
+        {
+          "nome": "006_114615_deploy-recreate-via-ssh-health-check-ver.txt",
+          "tipo": "txt",
+          "sha256": "88b4d4cd6eb45c1bef238f18ffb7d4143a693c50f7170fd18c801f10bf87c3df"
+        },
+        {
+          "nome": "006_114615_deploy-recreate-via-ssh-health-check-ver_renderizada.png",
+          "tipo": "png-renderizada",
+          "sha256": "5d9a29d75ae2c4d2be5a9985480c54e7340fd90398fe1346538e630c8966bb32"
+        }
+      ]
+    },
+    {
+      "numero": 7,
+      "tipo": "registro",
+      "descricao": "Health check pos-deploy passando e /version com o commit implantado (run 39971130945)",
+      "comando": "bash -c 'gh run view 39971130945 --log | awk -F'\"'\"'\\t'\"'\"' '\"'\"'$2==\"Health Check\" || $2==\"Conferir versão implantada\"'\"'\"' | sed -E '\"'\"'s/^[^\\t]*\\t//; s/\\t[0-9TZ:.-]+ /  /'\"'\"' | grep -E '\"'\"'Aguardando aplicação|Tentativa [0-9]|Health check passed|falhou após|\"status\":\"ok\"|\"commit\":\"[0-9a-f]{40}'\"'\"' | grep -vE '\"'\"'echo|grep'\"'\"''",
+      "shell": "direto",
+      "estilo": "terminal",
+      "cwd": "/mnt/c/Users/lucas/unifaat-devops-portfolio",
+      "inicio": "2026-10-23T11:46:32-03:00",
+      "fim": "2026-10-23T11:46:33-03:00",
+      "duracao_s": 1.4529122419999112,
+      "retorno": 0,
+      "interrompido": false,
+      "redacoes": {},
+      "avisos": [],
+      "arquivos": [
+        {
+          "nome": "007_114632_health-check-pos-deploy-passando-e-versi.txt",
+          "tipo": "txt",
+          "sha256": "432ddb490ad0952c05e58dd810c0dab773a82aabe35d4fa19a4a7ceb1a9fc169"
+        },
+        {
+          "nome": "007_114632_health-check-pos-deploy-passando-e-versi_renderizada.png",
+          "tipo": "png-renderizada",
+          "sha256": "ae2d6d4e4298700e6ef845fd1f984e98c899f3612d51df63fd7b94a5a372ba2d"
+        }
+      ]
+    },
+    {
+      "numero": 8,
+      "tipo": "registro",
+      "descricao": "Teste do runbook de rollback: versao atual -> sha-abd19a4 (login ECR antes do pull)",
+      "comando": "bash -c 'echo '\"'\"'== antes:'\"'\"'; curl -s http://100.57.3.69:3000/version; echo; echo '\"'\"'== rollback na EC2 (via SSH):'\"'\"'; ssh -o StrictHostKeyChecking=accept-new -i ~/.ssh/technova-aula10-deploy.pem ec2-user@100.57.3.69 '\"'\"'bash -s sha-abd19a4'\"'\"' < /home/lucaskenway/.claude-tmp/claude-1000/-mnt-c-Users-lucas-devops-20262/34f3b92f-18e7-4df7-bb12-7fe0d540429c/scratchpad/rollback.sh; echo '\"'\"'== depois (acesso externo):'\"'\"'; curl -s http://100.57.3.69:3000/version; echo'",
+      "shell": "direto",
+      "estilo": "terminal",
+      "cwd": "/mnt/c/Users/lucas/unifaat-devops-portfolio",
+      "inicio": "2026-10-23T11:51:01-03:00",
+      "fim": "2026-10-23T11:51:20-03:00",
+      "duracao_s": 18.325188000999333,
+      "retorno": 0,
+      "interrompido": false,
+      "redacoes": {},
+      "avisos": [],
+      "arquivos": [
+        {
+          "nome": "008_115101_teste-do-runbook-de-rollback-versao-atua.txt",
+          "tipo": "txt",
+          "sha256": "f3bc5dc5467f8c3502c09716bde922efbf495835bb41b25325f0cb6835f5babe"
+        },
+        {
+          "nome": "008_115101_teste-do-runbook-de-rollback-versao-atua_renderizada.png",
+          "tipo": "png-renderizada",
+          "sha256": "405047361e18ebea5edf390e10a4cc5cc90c37281b20449d97cbd5106a2df5e1"
+        }
+      ]
+    },
+    {
+      "numero": 9,
+      "tipo": "registro",
+      "descricao": "Retorno a versao da main apos o teste de rollback (cd.yml via workflow_dispatch, run 39973365347)",
+      "comando": "bash -c 'curl -s http://100.57.3.69:3000/version; echo; git log -1 --format='\"'\"'main = %H'\"'\"' origin/main'",
+      "shell": "direto",
+      "estilo": "terminal",
+      "cwd": "/mnt/c/Users/lucas/unifaat-devops-portfolio",
+      "inicio": "2026-10-23T11:53:33-03:00",
+      "fim": "2026-10-23T11:53:34-03:00",
+      "duracao_s": 0.6712481230006233,
+      "retorno": 0,
+      "interrompido": false,
+      "redacoes": {},
+      "avisos": [],
+      "arquivos": [
+        {
+          "nome": "009_115333_retorno-a-versao-da-main-apos-o-teste-de.txt",
+          "tipo": "txt",
+          "sha256": "d08ad34147cd246340399e921fc56ee74461db5ff86a76de99e0e21ccc453ccd"
+        },
+        {
+          "nome": "009_115333_retorno-a-versao-da-main-apos-o-teste-de_renderizada.png",
+          "tipo": "png-renderizada",
+          "sha256": "097276afad462f8aa7a40f153f95b5d2b4659c76045bedc9ddfae0a8aa4d3678"
+        }
+      ]
+    },
+    {
+      "numero": 10,
+      "tipo": "registro",
+      "descricao": "Versao no ar = HEAD da main remota (corrige o #009, que usou origin/main local desatualizado)",
+      "comando": "bash -c 'git fetch -q origin; git log -1 --format='\"'\"'main = %H'\"'\"' origin/main; curl -s http://100.57.3.69:3000/version; echo'",
+      "shell": "direto",
+      "estilo": "terminal",
+      "cwd": "/mnt/c/Users/lucas/unifaat-devops-portfolio",
+      "inicio": "2026-10-23T11:53:55-03:00",
+      "fim": "2026-10-23T11:53:58-03:00",
+      "duracao_s": 3.4948111760004394,
+      "retorno": 0,
+      "interrompido": false,
+      "redacoes": {},
+      "avisos": [],
+      "arquivos": [
+        {
+          "nome": "010_115355_versao-no-ar-head-da-main-remota-corrige.txt",
+          "tipo": "txt",
+          "sha256": "f991950b0d209c9af334c869bf9decec22135f10f5cf2252d0121720681fd439"
+        },
+        {
+          "nome": "010_115355_versao-no-ar-head-da-main-remota-corrige_renderizada.png",
+          "tipo": "png-renderizada",
+          "sha256": "25d35f2748de3c0373c98c1ab5fcf11827f3bbb6aa949435269efadc2564ad04"
+        }
+      ]
+    }
+  ]
+}

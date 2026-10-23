@@ -1,0 +1,41 @@
+===== EVIDÊNCIA #002 — Repositorio ECR technova-api: imagens e tags publicadas pelos pipelines (conta 721003528272, us-east-1) =====
+Comando:            bash -c 'aws ecr describe-repositories --repository-names technova-api --query '"'"'repositories[0].[repositoryUri,imageScanningConfiguration.scanOnPush]'"'"' --output text; aws ecr describe-images --repository-name technova-api --query '"'"'sort_by(imageDetails,&imagePushedAt)[].[imagePushedAt,join(`, `,imageTags||[`<untagged>`]),imageDigest]'"'"' --output table'
+Shell:              direto
+Diretório:          /mnt/c/Users/lucas/unifaat-devops-portfolio
+Ambiente:           WSL (Ubuntu) Ubuntu 26.04 LTS | usuário lucaskenway | host DESKTOP-AMJ5UEC
+Início:             2026-10-23T12:17:04.419-03:00
+Fim:                2026-10-23T12:17:08.871-03:00
+Duração:            4.451 s
+Código de retorno:  0 (sucesso)
+Dados sensíveis:    nenhum detectado
+Origem:             saída capturada diretamente do processo pela ferramenta evidencia 0.1.0
+
+----- SAÍDA (stdout e stderr intercalados, na ordem em que chegaram) -----
+721003528272.dkr.ecr.us-east-1.amazonaws.com/technova-api	True
+----------------------------------------------------------------------------------------------------------------------------------------
+|                                                            DescribeImages                                                            |
++-----------------------------------+----------------------+---------------------------------------------------------------------------+
+|  2026-10-23T11:35:25.318000-03:00 |  <untagged>          |  sha256:f813e573b73111b6804ee4def3589900a6d60cfdd3a36ada2e8febcb712fb179  |
+|  2026-10-23T11:35:25.675000-03:00 |  <untagged>          |  sha256:ad14e9ad9c8b4fa6accaceb02e25e9322e3c72c7f27b43039fb4c96b70c14105  |
+|  2026-10-23T11:35:26.007000-03:00 |  sha-fcafb0e         |  sha256:0cd828aea63a3611663639203ead18eefe19acb294b609e5f81a89a9d396fd45  |
+|  2026-10-23T11:37:46.063000-03:00 |  <untagged>          |  sha256:88027cbf1fc250b4a7a0ad096b73b73d86d2f2f9e156ea8dbbec8fb47c3d751c  |
+|  2026-10-23T11:37:46.259000-03:00 |  <untagged>          |  sha256:c44fbee8b44fd762ee22f840b771292d7da74f2356c0217a448882f181406b06  |
+|  2026-10-23T11:37:46.450000-03:00 |  <untagged>          |  sha256:ef1efce0cd6a26b90ce2db5158d1b0f29bcc4264d3917a8d1f7076a10ee8a0fe  |
+|  2026-10-23T11:37:54.971000-03:00 |  <untagged>          |  sha256:fce5e21b506325ad658cfd7a721a65a36f456547e09db810f6bf31f551bf739e  |
+|  2026-10-23T11:37:55.163000-03:00 |  <untagged>          |  sha256:de40ca724ab6275d9d66e501385c1e958a433bcf0f44219c14f4957bca3de4d4  |
+|  2026-10-23T11:37:55.421000-03:00 |  <untagged>          |  sha256:5a83d0a4ea2d9c45017a0d3236c54bb3d0cc3a8b9bb9848c9d626a4a8c37b2f0  |
+|  2026-10-23T11:43:54.260000-03:00 |  <untagged>          |  sha256:529e3a4e22bb9dff48090c246e74a74bc2175539a62e97c18538afda8a260c08  |
+|  2026-10-23T11:43:54.549000-03:00 |  <untagged>          |  sha256:857c343267ce35d0bb9e03abf0661a8f94f8539360bbc7e839c9ef7ce7fffec0  |
+|  2026-10-23T11:43:54.851000-03:00 |  sha-abd19a4         |  sha256:78fcfa3edd3c5fd9c1a8e7084d30a77bc3fe7c493db37d21daba28d24f60a133  |
+|  2026-10-23T11:44:09.195000-03:00 |  <untagged>          |  sha256:8f186a0c37bdf04b989a4aea6d5eb2c25ee68de25c224167af811bcee424e7e2  |
+|  2026-10-23T11:44:09.488000-03:00 |  <untagged>          |  sha256:9a97cf3ca80c815d90c7f9533a8bf2c624b81d09df15765a87ca3264341e2ff7  |
+|  2026-10-23T11:44:09.823000-03:00 |  sha-ff6c9b6         |  sha256:382a34acf12a86edfec2bbfff3765b19557b7b720e4d080c7f8270ad31bb1e28  |
+|  2026-10-23T11:50:34.181000-03:00 |  <untagged>          |  sha256:5a89acc841bf75ea0f912395eb938f724a0b830971b078b3af43ad9b8d63444d  |
+|  2026-10-23T11:50:34.401000-03:00 |  <untagged>          |  sha256:f0bee8857d038696ba05372e87baa75a7a0082aa59f0820fabd22144edc98e71  |
+|  2026-10-23T11:50:34.619000-03:00 |  <untagged>          |  sha256:b900b06b05c6a13a4d45f14db804171f48e6e6bf6a0f164c04733ddc7fcdae29  |
+|  2026-10-23T11:53:30.839000-03:00 |  <untagged>          |  sha256:2eb355782315f8c7185522189a2e88e09d15993123be0b54e31ace41111b974e  |
+|  2026-10-23T11:53:31.245000-03:00 |  <untagged>          |  sha256:ca59fbde4fe3c9efc62cd5b22ed69c7e3298e701c7a9124fed3fffa0d329e2c0  |
+|  2026-10-23T11:53:31.491000-03:00 |  latest, sha-dccfde1 |  sha256:42c70bbd4511a39af12988d140e8ee2be828b32c17c7f1dde4e24b4d4ec070ed  |
++-----------------------------------+----------------------+---------------------------------------------------------------------------+
+
+----- FIM -----

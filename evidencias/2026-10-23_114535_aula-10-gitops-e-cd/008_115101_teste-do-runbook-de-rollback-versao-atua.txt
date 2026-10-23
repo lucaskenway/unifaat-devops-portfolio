@@ -1,0 +1,38 @@
+===== EVIDÊNCIA #008 — Teste do runbook de rollback: versao atual -> sha-abd19a4 (login ECR antes do pull) =====
+Comando:            bash -c 'echo '"'"'== antes:'"'"'; curl -s http://100.57.3.69:3000/version; echo; echo '"'"'== rollback na EC2 (via SSH):'"'"'; ssh -o StrictHostKeyChecking=accept-new -i ~/.ssh/technova-aula10-deploy.pem ec2-user@100.57.3.69 '"'"'bash -s sha-abd19a4'"'"' < /home/lucaskenway/.claude-tmp/claude-1000/-mnt-c-Users-lucas-devops-20262/34f3b92f-18e7-4df7-bb12-7fe0d540429c/scratchpad/rollback.sh; echo '"'"'== depois (acesso externo):'"'"'; curl -s http://100.57.3.69:3000/version; echo'
+Shell:              direto
+Diretório:          /mnt/c/Users/lucas/unifaat-devops-portfolio
+Ambiente:           WSL (Ubuntu) Ubuntu 26.04 LTS | usuário lucaskenway | host DESKTOP-AMJ5UEC
+Início:             2026-10-23T11:51:01.974-03:00
+Fim:                2026-10-23T11:51:20.301-03:00
+Duração:            18.325 s
+Código de retorno:  0 (sucesso)
+Dados sensíveis:    nenhum detectado
+Origem:             saída capturada diretamente do processo pela ferramenta evidencia 0.1.0
+
+----- SAÍDA (stdout e stderr intercalados, na ordem em que chegaram) -----
+== antes:
+{"version":"1.1.0","commit":"dccfde1aa2176dd622f47b4a5a0b460f97a7f737","deployedAt":"2026-10-23T14:50:56Z"}
+== rollback na EC2 (via SSH):
+Warning: Permanently added '100.57.3.69' (ED25519) to the list of known hosts.
+** WARNING: connection is not using a post-quantum key exchange algorithm.
+** This session may be vulnerable to "store now, decrypt later" attacks.
+** The server may need to be upgraded. See https://openssh.com/pq.html
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+
+Login Succeeded
+721003528272.dkr.ecr.us-east-1.amazonaws.com/technova-api:sha-abd19a4
+721003528272.dkr.ecr.us-east-1.amazonaws.com/technova-api:sha-abd19a4  Up 3 seconds (health: starting)
+{"status":"ok","timestamp":"2026-10-23T14:52:05.580Z","version":"1.1.0"}
+{"version":"1.1.0","commit":"rollback-sha-abd19a4","deployedAt":"2026-10-23T14:52:02Z"}
+== depois (acesso externo):
+{"version":"1.1.0","commit":"rollback-sha-abd19a4","deployedAt":"2026-10-23T14:52:02Z"}
+
+----- SOMENTE STDERR -----
+Warning: Permanently added '100.57.3.69' (ED25519) to the list of known hosts.
+** WARNING: connection is not using a post-quantum key exchange algorithm.
+** This session may be vulnerable to "store now, decrypt later" attacks.
+** The server may need to be upgraded. See https://openssh.com/pq.html
+
+----- FIM -----

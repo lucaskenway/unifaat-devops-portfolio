@@ -1,0 +1,83 @@
+===== EVIDÊNCIA #006 — Deploy Recreate via SSH + health check + /version (run 39971130945) =====
+Comando:            bash -c 'gh run view 39971130945 --log | awk -F'"'"'\t'"'"' '"'"'$2=="Deploy via SSH (Recreate Strategy)" || $2=="Health Check" || $2=="Conferir versão implantada"'"'"' | sed -E '"'"'s/^[^\t]*\t//; s/\t[0-9TZ:.-]+ /  /'"'"' | grep -E '"'"'\)  [^ ]|Check  [^ ]|implantada  [^ ]'"'"' | grep -vE '"'"'Drone SSH|Successfully executed|  [a-f0-9]{12}: |Digest:|Pull complete|Waiting|Verifying|Download complete'"'"''
+Shell:              direto
+Diretório:          /mnt/c/Users/lucas/unifaat-devops-portfolio
+Ambiente:           WSL (Ubuntu) Ubuntu 26.04 LTS | usuário lucaskenway | host DESKTOP-AMJ5UEC
+Início:             2026-10-23T11:46:15.143-03:00
+Fim:                2026-10-23T11:46:16.552-03:00
+Duração:            1.409 s
+Código de retorno:  0 (sucesso)
+Dados sensíveis:    nenhum detectado
+Origem:             saída capturada diretamente do processo pela ferramenta evidencia 0.1.0
+
+----- SAÍDA (stdout e stderr intercalados, na ordem em que chegaram) -----
+Deploy via SSH (Recreate Strategy)  with:
+Deploy via SSH (Recreate Strategy)  env:
+Deploy via SSH (Recreate Strategy)  ##[endgroup]
+Deploy via SSH (Recreate Strategy)  ##[start-action display=Set GitHub Path;id=__appleboy_ssh-action.__run]
+Deploy via SSH (Recreate Strategy)  ##[group]Run echo "$GITHUB_ACTION_PATH" >> $GITHUB_PATH
+Deploy via SSH (Recreate Strategy)  [36;1mecho "$GITHUB_ACTION_PATH" >> $GITHUB_PATH[0m
+Deploy via SSH (Recreate Strategy)  shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+Deploy via SSH (Recreate Strategy)  env:
+Deploy via SSH (Recreate Strategy)  ##[endgroup]
+Deploy via SSH (Recreate Strategy)  ##[end-action id=__appleboy_ssh-action.__run;outcome=success;conclusion=success;duration_ms=22]
+Deploy via SSH (Recreate Strategy)  ##[start-action display=Run entrypoint.sh;id=__appleboy_ssh-action.entrypoint]
+Deploy via SSH (Recreate Strategy)  ##[group]Run entrypoint.sh
+Deploy via SSH (Recreate Strategy)  [36;1mentrypoint.sh[0m
+Deploy via SSH (Recreate Strategy)  shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+Deploy via SSH (Recreate Strategy)  env:
+Deploy via SSH (Recreate Strategy)  ##[endgroup]
+Deploy via SSH (Recreate Strategy)  Downloading drone-ssh-1.8.2-linux-amd64 from https://github.com/appleboy/drone-ssh/releases/download/v1.8.2
+Deploy via SSH (Recreate Strategy)  ======= CLI Version Information =======
+Deploy via SSH (Recreate Strategy)  =======================================
+Deploy via SSH (Recreate Strategy)  🔐 Login no Amazon ECR (antes do pull)...
+Deploy via SSH (Recreate Strategy)  WARNING! Your password will be stored unencrypted in /home/***/.docker/config.json.
+Deploy via SSH (Recreate Strategy)  Configure a credential helper to remove this warning. See
+Deploy via SSH (Recreate Strategy)  https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+Deploy via SSH (Recreate Strategy)  Login Succeeded
+Deploy via SSH (Recreate Strategy)  🛑 Parando container atual...
+Deploy via SSH (Recreate Strategy)  technova-api
+Deploy via SSH (Recreate Strategy)  technova-api
+Deploy via SSH (Recreate Strategy)  📦 Pull da nova imagem: 721003528272.dkr.ecr.us-east-1.amazonaws.com/technova-api:sha-abd19a4
+Deploy via SSH (Recreate Strategy)  sha-abd19a4: Pulling from technova-api
+Deploy via SSH (Recreate Strategy)  Status: Downloaded newer image for 721003528272.dkr.ecr.us-east-1.amazonaws.com/technova-api:sha-abd19a4
+Deploy via SSH (Recreate Strategy)  721003528272.dkr.ecr.us-east-1.amazonaws.com/technova-api:sha-abd19a4
+Deploy via SSH (Recreate Strategy)  ▶️ Iniciando novo container...
+Deploy via SSH (Recreate Strategy)  1e26cf1921cfddff2d461b0c6a985cdae5c9d23e254d0d510484c6b23a11770f
+Deploy via SSH (Recreate Strategy)  CONTAINER ID   IMAGE                                                                   COMMAND                  CREATED                  STATUS                                     PORTS                                       NAMES
+Deploy via SSH (Recreate Strategy)  1e26cf1921cf   721003528272.dkr.ecr.us-east-1.amazonaws.com/technova-api:sha-abd19a4   "docker-entrypoint.s…"   Less than a second ago   Up Less than a second (health: starting)   0.0.0.0:3000->3000/tcp, :::3000->3000/tcp   technova-api
+Deploy via SSH (Recreate Strategy)  ✅ Container iniciado
+Deploy via SSH (Recreate Strategy)  ===============================================
+Deploy via SSH (Recreate Strategy)  ===============================================
+Deploy via SSH (Recreate Strategy)  ##[end-action id=__appleboy_ssh-action.entrypoint;outcome=success;conclusion=success;duration_ms=14346]
+Health Check  [36;1mecho "⏳ Aguardando aplicação iniciar..."[0m
+Health Check  [36;1msleep 10[0m
+Health Check  [36;1mfor i in $(seq 1 20); do[0m
+Health Check  [36;1m  HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 5 \[0m
+Health Check  [36;1m    "http://$HOST:$APP_PORT/health" || true)[0m
+Health Check  [36;1m  if [ "$HTTP_CODE" = "200" ]; then[0m
+Health Check  [36;1m    echo "✅ Health check passed! (HTTP $HTTP_CODE, tentativa $i)"[0m
+Health Check  [36;1m    curl -s "http://$HOST:$APP_PORT/health"; echo[0m
+Health Check  [36;1m    exit 0[0m
+Health Check  [36;1m  fi[0m
+Health Check  [36;1m  echo "⏳ Tentativa $i/20 - HTTP ${HTTP_CODE:-000} - aguardando 5s..."[0m
+Health Check  [36;1m  sleep 5[0m
+Health Check  [36;1mdone[0m
+Health Check  [36;1mecho "❌ Health check falhou após 20 tentativas!"[0m
+Health Check  [36;1mexit 1[0m
+Health Check  shell: /usr/bin/bash -e {0}
+Health Check  env:
+Health Check  ##[endgroup]
+Health Check  ⏳ Aguardando aplicação iniciar...
+Health Check  ✅ Health check passed! (HTTP 200, tentativa 1)
+Health Check  {"status":"ok","timestamp":"2026-10-23T14:44:39.104Z","version":"1.1.0"}
+Conferir versão implantada  [36;1mVERSION=$(curl -s "http://$HOST:$APP_PORT/version")[0m
+Conferir versão implantada  [36;1mecho "$VERSION"[0m
+Conferir versão implantada  [36;1mecho "$VERSION" | grep -q "\"commit\":\"$GITHUB_SHA\"" \[0m
+Conferir versão implantada  [36;1m  || { echo "::error::/version não reporta o commit $GITHUB_SHA"; exit 1; }[0m
+Conferir versão implantada  shell: /usr/bin/bash -e {0}
+Conferir versão implantada  env:
+Conferir versão implantada  ##[endgroup]
+Conferir versão implantada  {"version":"1.1.0","commit":"abd19a4dbab550e238f3b9fb67509d2d72f2ea80","deployedAt":"2026-10-23T14:44:14Z"}
+
+----- FIM -----

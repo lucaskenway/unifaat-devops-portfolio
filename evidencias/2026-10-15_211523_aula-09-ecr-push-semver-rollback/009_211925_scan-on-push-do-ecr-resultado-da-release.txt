@@ -1,0 +1,20 @@
+===== EVIDÊNCIA #009 — Scan on push do ECR: resultado da release 1.0.0 =====
+Comando:            aws ecr describe-image-scan-findings --repository-name technova-api --image-id imageTag=1.0.0 --region us-east-1 --query '{status:imageScanStatus.status,severidades:imageScanFindings.findingSeverityCounts,concluido:imageScanFindings.imageScanCompletedAt}' --output json
+Shell:              direto
+Diretório:          /mnt/c/Users/lucas/unifaat-devops-portfolio/aula-09/technova-api
+Ambiente:           WSL (Ubuntu) Ubuntu 26.04 LTS | usuário lucaskenway | host DESKTOP-AMJ5UEC
+Início:             2026-10-15T21:19:25.103-03:00
+Fim:                2026-10-15T21:19:26.574-03:00
+Duração:            1.472 s
+Código de retorno:  0 (sucesso)
+Dados sensíveis:    nenhum detectado
+Origem:             saída capturada diretamente do processo pela ferramenta evidencia 0.1.0
+
+----- SAÍDA (stdout e stderr intercalados, na ordem em que chegaram) -----
+{
+    "status": "COMPLETE",
+    "severidades": {},
+    "concluido": "2026-10-15T21:18:08-03:00"
+}
+
+----- FIM -----
