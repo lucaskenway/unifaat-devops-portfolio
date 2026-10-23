@@ -1,0 +1,128 @@
+name: AI Code Review — Aula 09
+
+# Só em Pull Requests: push direto na main é responsabilidade do CI
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [main]
+
+concurrency:
+  group: ai-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write   # postar/atualizar o comentário do review
+
+jobs:
+  ai-review:
+    name: AI Review
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # histórico completo: necessário para o git diff base...head
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Obter diff do PR
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          git diff --unified=3 "$BASE_SHA...$HEAD_SHA" > /tmp/pr-diff.txt
+          echo "Arquivos alterados:"
+          git diff --name-only "$BASE_SHA...$HEAD_SHA"
+          echo "Tamanho do diff: $(wc -l < /tmp/pr-diff.txt) linhas"
+
+      # Opcional: LLM no Amazon Bedrock. Precisa da variável de repositório BEDROCK_MODEL_ID e dos
+      # 3 secrets da sessão do Learner Lab. Sem eles (ou com a sessão vencida) o review usa só as regras.
+      - name: Verificar acesso ao Bedrock (Learner Lab)
+        id: lab
+        env:
+          BEDROCK_MODEL_ID: ${{ vars.BEDROCK_MODEL_ID }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+        run: |
+          if [ -z "$BEDROCK_MODEL_ID" ] || [ -z "$AWS_SESSION_TOKEN" ]; then
+            echo "Bedrock desligado (sem BEDROCK_MODEL_ID ou sem secrets do Lab) — review só por regras"
+            echo "valid=false" >> "$GITHUB_OUTPUT"
+          elif aws sts get-caller-identity --region us-east-1 >/dev/null 2>&1; then
+            echo "valid=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning title=Bedrock::Credenciais do Learner Lab expiradas — review só por regras"
+            echo "valid=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Executar análise de código
+        id: analysis
+        env:
+          DIFF_FILE: /tmp/pr-diff.txt
+          REVIEW_OUTPUT: /tmp/ai-review-result.md
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          AWS_REGION: us-east-1
+          BEDROCK_MODEL_ID: ${{ steps.lab.outputs.valid == 'true' && vars.BEDROCK_MODEL_ID || '' }}
+          AWS_ACCESS_KEY_ID: ${{ steps.lab.outputs.valid == 'true' && secrets.AWS_ACCESS_KEY_ID || '' }}
+          AWS_SECRET_ACCESS_KEY: ${{ steps.lab.outputs.valid == 'true' && secrets.AWS_SECRET_ACCESS_KEY || '' }}
+          AWS_SESSION_TOKEN: ${{ steps.lab.outputs.valid == 'true' && secrets.AWS_SESSION_TOKEN || '' }}
+        run: node .github/scripts/ai-review.js
+
+      # Atualiza o comentário existente em vez de criar um novo a cada push no PR
+      - name: Postar ou atualizar comentário no PR
+        if: always() && steps.analysis.outcome != 'skipped'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const marker = '<!-- technova-ai-review -->';
+            const path = '/tmp/ai-review-result.md';
+            const body = fs.existsSync(path)
+              ? fs.readFileSync(path, 'utf8')
+              : `${marker}\n## 🤖 AI Code Review — TechNova\n\n⚠️ A análise falhou antes de gerar o relatório. Veja os logs do workflow.`;
+
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number
+            });
+            const existing = comments.find(c => c.user.type === 'Bot' && c.body.includes(marker));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body
+              });
+              core.info(`Comentário atualizado: ${existing.html_url}`);
+            } else {
+              const { data } = await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body
+              });
+              core.info(`Comentário criado: ${data.html_url}`);
+            }
+
+      # CRITICAL → job falha → check vermelho no PR (bloqueia o merge com branch protection)
+      # Só WARNING/INFO → job passa
+      - name: Quality gate
+        env:
+          CRITICAL: ${{ steps.analysis.outputs.critical }}
+          WARNING: ${{ steps.analysis.outputs.warning }}
+          INFO: ${{ steps.analysis.outputs.info }}
+        run: |
+          echo "CRITICAL=$CRITICAL WARNING=$WARNING INFO=$INFO"
+          if [ "${CRITICAL:-0}" -gt 0 ]; then
+            echo "::error title=Quality gate::$CRITICAL achado(s) CRITICAL — PR bloqueado até a correção."
+            exit 1
+          fi
+          echo "✅ Quality gate aprovado (sem CRITICAL)."
