@@ -88,6 +88,16 @@ resource "aws_security_group_rule" "api" {
   description       = "TechNova API (health check do pipeline)"
 }
 
+resource "aws_security_group_rule" "https" {
+  type              = "ingress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"] # ai-review-ignore: HTTPS público (TLS terminado na EC2 no futuro)
+  security_group_id = aws_security_group.technova_api.id
+  description       = "HTTPS inbound"
+}
+
 resource "aws_security_group_rule" "egress_all" {
   type              = "egress"
   from_port         = 0
