@@ -1,0 +1,19 @@
+===== EVIDÊNCIA #007 — Health check pos-deploy passando e /version com o commit implantado (run 39971130945) =====
+Comando:            bash -c 'gh run view 39971130945 --log | awk -F'"'"'\t'"'"' '"'"'$2=="Health Check" || $2=="Conferir versão implantada"'"'"' | sed -E '"'"'s/^[^\t]*\t//; s/\t[0-9TZ:.-]+ /  /'"'"' | grep -E '"'"'Aguardando aplicação|Tentativa [0-9]|Health check passed|falhou após|"status":"ok"|"commit":"[0-9a-f]{40}'"'"' | grep -vE '"'"'echo|grep'"'"''
+Shell:              direto
+Diretório:          /mnt/c/Users/lucas/unifaat-devops-portfolio
+Ambiente:           WSL (Ubuntu) Ubuntu 26.04 LTS | usuário lucaskenway | host DESKTOP-AMJ5UEC
+Início:             2026-10-23T11:46:32.525-03:00
+Fim:                2026-10-23T11:46:33.978-03:00
+Duração:            1.453 s
+Código de retorno:  0 (sucesso)
+Dados sensíveis:    nenhum detectado
+Origem:             saída capturada diretamente do processo pela ferramenta evidencia 0.1.0
+
+----- SAÍDA (stdout e stderr intercalados, na ordem em que chegaram) -----
+Health Check  ⏳ Aguardando aplicação iniciar...
+Health Check  ✅ Health check passed! (HTTP 200, tentativa 1)
+Health Check  {"status":"ok","timestamp":"2026-10-23T14:44:39.104Z","version":"1.1.0"}
+Conferir versão implantada  {"version":"1.1.0","commit":"abd19a4dbab550e238f3b9fb67509d2d72f2ea80","deployedAt":"2026-10-23T14:44:14Z"}
+
+----- FIM -----

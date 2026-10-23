@@ -1,0 +1,45 @@
+===== EVIDÊNCIA #001 — Log do Terraform Apply (run 39970717413) apos o merge do PR #5 =====
+Comando:            bash -c 'gh run view 39970717413 --log | awk -F'"'"'\t'"'"' '"'"'$2=="Terraform Apply" || $2=="Outputs"'"'"' | sed -E '"'"'s/^[^\t]*\t//; s/\t[0-9TZ:.-]+ /  /'"'"' | grep -E '"'"'Creation complete|Apply complete|= "'"'"' | grep -vE '"'"'\[36;1m|\+ "'"'"' | head -30'
+Shell:              direto
+Diretório:          /mnt/c/Users/lucas/unifaat-devops-portfolio
+Ambiente:           WSL (Ubuntu) Ubuntu 26.04 LTS | usuário lucaskenway | host DESKTOP-AMJ5UEC
+Início:             2026-10-23T11:45:35.495-03:00
+Fim:                2026-10-23T11:45:36.927-03:00
+Duração:            1.432 s
+Código de retorno:  0 (sucesso)
+Dados sensíveis:    nenhum detectado
+Origem:             saída capturada diretamente do processo pela ferramenta evidencia 0.1.0
+
+----- SAÍDA (stdout e stderr intercalados, na ordem em que chegaram) -----
+Terraform Apply        + ami                                  = "ami-08c46876c64a927b8"
+Terraform Apply        + iam_instance_profile                 = "LabInstanceProfile"
+Terraform Apply        + instance_type                        = "t3.micro"
+Terraform Apply        + key_name                             = "technova-aula10-deploy"
+Terraform Apply        + user_data                            = "20a4117e5f77c0dc5538ebc13fdde304a24d9d0f"
+Terraform Apply            + volume_type           = "gp3"
+Terraform Apply                + cidr_block                 = "0.0.0.0/0"
+Terraform Apply        + description            = "TechNova API (Aula 10): SSH for the CD pipeline and the API port"
+Terraform Apply        + name                   = "6325226-technova-aula10-api-sg"
+Terraform Apply        + description              = "TechNova API (health check do pipeline)"
+Terraform Apply        + protocol                 = "tcp"
+Terraform Apply        + type                     = "ingress"
+Terraform Apply        + description              = "Saida liberada (pull no ECR, pacotes)"
+Terraform Apply        + protocol                 = "-1"
+Terraform Apply        + type                     = "egress"
+Terraform Apply        + description              = "SSH (deploy via appleboy/ssh-action)"
+Terraform Apply        + protocol                 = "tcp"
+Terraform Apply        + type                     = "ingress"
+Terraform Apply        + availability_zone                              = "us-east-1a"
+Terraform Apply        + cidr_block                                     = "10.10.1.0/24"
+Terraform Apply        + cidr_block                           = "10.10.0.0/16"
+Terraform Apply        + instance_tenancy                     = "default"
+Terraform Apply    + ecr_repository_url = "721003528272.dkr.ecr.us-east-1.amazonaws.com/technova-api"
+Terraform Apply  aws_vpc.main: Creation complete after 11s [id=vpc-092eb5699e40b859c]
+Terraform Apply  aws_internet_gateway.main: Creation complete after 1s [id=igw-0a0383224d3b83444]
+Terraform Apply  aws_route_table.public: Creation complete after 0s [id=rtb-05ad171a1d42e5331]
+Terraform Apply  aws_security_group.technova_api: Creation complete after 2s [id=sg-07c4e0726218d1228]
+Terraform Apply  aws_security_group_rule.ssh: Creation complete after 1s [id=sgrule-2404092402]
+Terraform Apply  aws_security_group_rule.egress_all: Creation complete after 1s [id=sgrule-652561247]
+Terraform Apply  aws_security_group_rule.api: Creation complete after 1s [id=sgrule-2616899055]
+
+----- FIM -----

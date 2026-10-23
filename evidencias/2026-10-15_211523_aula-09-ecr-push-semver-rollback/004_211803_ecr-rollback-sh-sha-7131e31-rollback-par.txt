@@ -1,0 +1,31 @@
+===== EVIDÊNCIA #004 — ecr-rollback.sh sha-7131e31: rollback para o build anterior =====
+Comando:            ./ecr-rollback.sh sha-7131e31
+Shell:              direto
+Diretório:          /mnt/c/Users/lucas/unifaat-devops-portfolio/aula-09/technova-api
+Ambiente:           WSL (Ubuntu) Ubuntu 26.04 LTS | usuário lucaskenway | host DESKTOP-AMJ5UEC
+Início:             2026-10-15T21:18:03.097-03:00
+Fim:                2026-10-15T21:18:15.288-03:00
+Duração:            12.191 s
+Código de retorno:  125 (FALHA)
+Dados sensíveis:    nenhum detectado
+Origem:             saída capturada diretamente do processo pela ferramenta evidencia 0.1.0
+
+----- SAÍDA (stdout e stderr intercalados, na ordem em que chegaram) -----
+==> Login no ECR...
+Login Succeeded
+==> Pull 844303000847.dkr.ecr.us-east-1.amazonaws.com/technova-api:sha-7131e31
+sha-7131e31: Pulling from technova-api
+Digest: sha256:d2f0f0b561ce85b0462c640cd1dea8193499bae456f81d5df345c644f96e2426
+Status: Downloaded newer image for 844303000847.dkr.ecr.us-east-1.amazonaws.com/technova-api:sha-7131e31
+844303000847.dkr.ecr.us-east-1.amazonaws.com/technova-api:sha-7131e31
+==> Substituindo o container technova-prod
+docker: Error response from daemon: failed to set up container networking: driver failed programming external connectivity on endpoint technova-prod (538c6767565105a4ba7ad8bc4c23f33a504d57eaa069e239437e044734fe9c3a): Bind for 0.0.0.0:3000 failed: port is already allocated
+
+Run 'docker run --help' for more information
+
+----- SOMENTE STDERR -----
+docker: Error response from daemon: failed to set up container networking: driver failed programming external connectivity on endpoint technova-prod (538c6767565105a4ba7ad8bc4c23f33a504d57eaa069e239437e044734fe9c3a): Bind for 0.0.0.0:3000 failed: port is already allocated
+
+Run 'docker run --help' for more information
+
+----- FIM -----

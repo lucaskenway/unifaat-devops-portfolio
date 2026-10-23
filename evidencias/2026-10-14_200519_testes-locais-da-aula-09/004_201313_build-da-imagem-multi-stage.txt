@@ -1,0 +1,78 @@
+===== EVIDÊNCIA #004 — Build da imagem multi-stage =====
+Comando:            cd aula-09/technova-api && docker build -t technova-api:aula09 . && docker images technova-api:aula09
+Shell:              bash
+Diretório:          /mnt/c/Users/lucas/unifaat-devops-portfolio
+Ambiente:           WSL (Ubuntu) Ubuntu 26.04 LTS | usuário lucaskenway | host DESKTOP-AMJ5UEC
+Início:             2026-10-14T20:13:13.636-03:00
+Fim:                2026-10-14T20:13:15.841-03:00
+Duração:            2.206 s
+Código de retorno:  0 (sucesso)
+Dados sensíveis:    nenhum detectado
+Origem:             saída capturada diretamente do processo pela ferramenta evidencia 0.1.0
+
+----- SAÍDA (stdout e stderr intercalados, na ordem em que chegaram) -----
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+Sending build context to Docker daemon  201.7kB
+Step 1/16 : FROM node:20-alpine AS builder
+ ---> fb4cd12c85ee
+Step 2/16 : WORKDIR /app
+ ---> Using cache
+ ---> 68b6cbe9d51c
+Step 3/16 : COPY package*.json ./
+ ---> Using cache
+ ---> 79bf22b2c294
+Step 4/16 : RUN npm ci --omit=dev && npm cache clean --force
+ ---> Using cache
+ ---> 6a1e8b714085
+Step 5/16 : FROM node:20-alpine AS runtime
+ ---> fb4cd12c85ee
+Step 6/16 : LABEL org.opencontainers.image.source="https://github.com/lucaskenway/unifaat-devops-portfolio"
+ ---> Using cache
+ ---> ff90f3409d3a
+Step 7/16 : LABEL org.opencontainers.image.description="TechNova API - Sistema de gestão de pedidos"
+ ---> Using cache
+ ---> b44861ed4f59
+Step 8/16 : ENV NODE_ENV=production
+ ---> Using cache
+ ---> 6225c5866ad0
+Step 9/16 : WORKDIR /app
+ ---> Using cache
+ ---> a862416ec1c1
+Step 10/16 : RUN apk upgrade --no-cache &&     rm -rf /usr/local/lib/node_modules /usr/local/bin/npm /usr/local/bin/npx            /usr/local/bin/corepack /opt/yarn* /usr/local/bin/yarn /usr/local/bin/yarnpkg &&     addgroup -g 1001 -S nodejs &&     adduser -S technova -u 1001 -G nodejs
+ ---> Using cache
+ ---> 3af6933d6784
+Step 11/16 : COPY --from=builder --chown=technova:nodejs /app/node_modules ./node_modules
+ ---> Using cache
+ ---> 380fad94bc85
+Step 12/16 : COPY --chown=technova:nodejs package.json server.js ./
+ ---> Using cache
+ ---> 7173010b3226
+Step 13/16 : USER technova
+ ---> Using cache
+ ---> 0e484a3e3d52
+Step 14/16 : EXPOSE 3000
+ ---> Using cache
+ ---> b1ccf03c3688
+Step 15/16 : HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3   CMD wget --no-verbose --tries=1 --spider http://localhost:3000/health || exit 1
+ ---> Using cache
+ ---> 5a6c3fc2b234
+Step 16/16 : CMD ["node", "server.js"]
+ ---> Using cache
+ ---> 585d6aa3d127
+Successfully built 585d6aa3d127
+Successfully tagged technova-api:aula09
+IMAGE                 ID             DISK USAGE   CONTENT SIZE   EXTRA
+technova-api:aula09   585d6aa3d127        209MB           52MB        
+WARNING: This output is designed for human readability. For machine-readable output, please use --format.
+
+----- SOMENTE STDERR -----
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+WARNING: This output is designed for human readability. For machine-readable output, please use --format.
+
+----- FIM -----

@@ -1,0 +1,327 @@
+{
+  "versao_formato": 1,
+  "descricao": "testes-locais-da-aula-09",
+  "projeto": "unifaat-devops-portfolio",
+  "raiz_projeto": "C:/Users/lucas/unifaat-devops-portfolio",
+  "inicio": "2026-10-14T20:05:19-03:00",
+  "fim": "2026-10-14T20:18:10-03:00",
+  "ambiente_inicio": {
+    "so": "WSL (Ubuntu) Ubuntu 26.04 LTS",
+    "usuario": "lucaskenway",
+    "host": "DESKTOP-AMJ5UEC",
+    "python": "3.14.4",
+    "terminal": ""
+  },
+  "itens": [
+    {
+      "numero": 1,
+      "tipo": "registro",
+      "descricao": "Lint (ESLint) da TechNova API",
+      "comando": "cd aula-09/technova-api && npm ci --no-audit --no-fund && npm run lint",
+      "shell": "bash",
+      "estilo": "terminal",
+      "cwd": "/mnt/c/Users/lucas/unifaat-devops-portfolio",
+      "inicio": "2026-10-14T20:09:50-03:00",
+      "fim": "2026-10-14T20:11:54-03:00",
+      "duracao_s": 123.29175365299943,
+      "retorno": 0,
+      "interrompido": false,
+      "redacoes": {},
+      "avisos": [],
+      "arquivos": [
+        {
+          "nome": "001_200950_lint-eslint-da-technova-api.txt",
+          "tipo": "txt",
+          "sha256": "26daadf04d0d27af3b26d61f4ac649f1df4b55b5b7e17fa15c1c78e96981902c"
+        },
+        {
+          "nome": "001_200950_lint-eslint-da-technova-api_renderizada.png",
+          "tipo": "png-renderizada",
+          "sha256": "40741d237cf93eacdf205e862260ea2d984a3f9bade71993c1d54dc8704c9e3a"
+        }
+      ]
+    },
+    {
+      "numero": 2,
+      "tipo": "registro",
+      "descricao": "Testes Jest com coverage",
+      "comando": "cd aula-09/technova-api && npm run test:ci",
+      "shell": "bash",
+      "estilo": "terminal",
+      "cwd": "/mnt/c/Users/lucas/unifaat-devops-portfolio",
+      "inicio": "2026-10-14T20:11:55-03:00",
+      "fim": "2026-10-14T20:13:10-03:00",
+      "duracao_s": 74.9713039040007,
+      "retorno": 0,
+      "interrompido": false,
+      "redacoes": {},
+      "avisos": [],
+      "arquivos": [
+        {
+          "nome": "002_201155_testes-jest-com-coverage.txt",
+          "tipo": "txt",
+          "sha256": "51562bd48758b5e91fc34cdf68e74364984a0de3d10c043db530e18a9fb79f3c"
+        },
+        {
+          "nome": "002_201155_testes-jest-com-coverage_renderizada.png",
+          "tipo": "png-renderizada",
+          "sha256": "54251d9bdb43a590a1ba0eb9cd298feef39f1899008b739a96daadbc95b026d5"
+        }
+      ]
+    },
+    {
+      "numero": 3,
+      "tipo": "registro",
+      "descricao": "Validacao dos workflows com actionlint",
+      "comando": "docker run --rm -v \"$PWD:[REDIGIDO:chave=valor] -w /repo rhysd/actionlint:1.7.7 -no-color .github/workflows/ci-aula09.yml .github/workflows/ai-review-aula09.yml .github/workflows/security-scan-aula09.yml && echo 'actionlint: nenhum problema encontrado'",
+      "shell": "bash",
+      "estilo": "terminal",
+      "cwd": "/mnt/c/Users/lucas/unifaat-devops-portfolio",
+      "inicio": "2026-10-14T20:13:10-03:00",
+      "fim": "2026-10-14T20:13:13-03:00",
+      "duracao_s": 2.151042452999718,
+      "retorno": 0,
+      "interrompido": false,
+      "redacoes": {
+        "chave=valor": 1
+      },
+      "avisos": [],
+      "arquivos": [
+        {
+          "nome": "003_201310_validacao-dos-workflows-com-actionlint.txt",
+          "tipo": "txt",
+          "sha256": "9531d94219f2fa2d3bc25d1f831799c162d6d47f437f658c380de3b48ca8b68d"
+        },
+        {
+          "nome": "003_201310_validacao-dos-workflows-com-actionlint_renderizada.png",
+          "tipo": "png-renderizada",
+          "sha256": "11850511846261d28a78ed330a4eeeab721bf087a2847002ac7771ade557a4b6"
+        }
+      ]
+    },
+    {
+      "numero": 4,
+      "tipo": "registro",
+      "descricao": "Build da imagem multi-stage",
+      "comando": "cd aula-09/technova-api && docker build -t technova-api:aula09 . && docker images technova-api:aula09",
+      "shell": "bash",
+      "estilo": "terminal",
+      "cwd": "/mnt/c/Users/lucas/unifaat-devops-portfolio",
+      "inicio": "2026-10-14T20:13:13-03:00",
+      "fim": "2026-10-14T20:13:15-03:00",
+      "duracao_s": 2.2058476259999225,
+      "retorno": 0,
+      "interrompido": false,
+      "redacoes": {},
+      "avisos": [],
+      "arquivos": [
+        {
+          "nome": "004_201313_build-da-imagem-multi-stage.txt",
+          "tipo": "txt",
+          "sha256": "7bcbfaf3e2c22a612c2bf48eef14e3d0e1f8c149ce886520426d65d0bf8f0b89"
+        },
+        {
+          "nome": "004_201313_build-da-imagem-multi-stage_renderizada.png",
+          "tipo": "png-renderizada",
+          "sha256": "5b724766edc3c28da2f894f4a1b5bab6efb8391e9e76d96c35a7a4e7b25a623e"
+        }
+      ]
+    },
+    {
+      "numero": 5,
+      "tipo": "registro",
+      "descricao": "Container: health check, usuario nao-root e HEALTHCHECK",
+      "comando": "docker rm -f technova-aula09 >/dev/null 2>&1; docker run -d --name technova-aula09 -p 3000:3000 technova-api:aula09 && sleep 12 && curl -s http://localhost:3000/health && echo && echo \"usuario: $(docker exec technova-aula09 whoami)\" && docker inspect --format 'healthcheck: {{.State.Health.Status}}' technova-aula09",
+      "shell": "bash",
+      "estilo": "terminal",
+      "cwd": "/mnt/c/Users/lucas/unifaat-devops-portfolio",
+      "inicio": "2026-10-14T20:13:27-03:00",
+      "fim": "2026-10-14T20:13:27-03:00",
+      "duracao_s": 0.7752122120000422,
+      "retorno": 125,
+      "interrompido": false,
+      "redacoes": {},
+      "avisos": [],
+      "arquivos": [
+        {
+          "nome": "005_201327_container-health-check-usuario-nao-root.txt",
+          "tipo": "txt",
+          "sha256": "f4ca0e1085674b3461064fd52dee007bd30a6163765e023bb0d39fb4d7a851f6"
+        },
+        {
+          "nome": "005_201327_container-health-check-usuario-nao-root_renderizada.png",
+          "tipo": "png-renderizada",
+          "sha256": "9683c72b90cad0dd2cacca64b2baae74005f7a6ea547c149ac096242537c0fdc"
+        }
+      ]
+    },
+    {
+      "numero": 6,
+      "tipo": "registro",
+      "descricao": "Trivy: vulnerabilidades da imagem (CRITICAL/HIGH/MEDIUM)",
+      "comando": "docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:0.56.1 image --severity CRITICAL,HIGH,MEDIUM --ignore-unfixed --exit-code 1 -q technova-api:aula09 && echo 'Trivy image: 0 vulnerabilidades CRITICAL/HIGH/MEDIUM'",
+      "shell": "bash",
+      "estilo": "terminal",
+      "cwd": "/mnt/c/Users/lucas/unifaat-devops-portfolio",
+      "inicio": "2026-10-14T20:13:28-03:00",
+      "fim": "2026-10-14T20:14:34-03:00",
+      "duracao_s": 65.87147708300017,
+      "retorno": 0,
+      "interrompido": false,
+      "redacoes": {},
+      "avisos": [],
+      "arquivos": [
+        {
+          "nome": "006_201328_trivy-vulnerabilidades-da-imagem-critica.txt",
+          "tipo": "txt",
+          "sha256": "64cb434e71a59723950e122ce69fd1c5a4b09b4a75434d4ed8f4c2532d29e49d"
+        },
+        {
+          "nome": "006_201328_trivy-vulnerabilidades-da-imagem-critica_renderizada.png",
+          "tipo": "png-renderizada",
+          "sha256": "d8c562dcc9e830da26a166a0886eb605b221cd9804850da6cb3849fb25aa6a9e"
+        }
+      ]
+    },
+    {
+      "numero": 7,
+      "tipo": "registro",
+      "descricao": "Trivy: misconfiguracao do Dockerfile",
+      "comando": "docker run --rm -v \"$PWD/aula-09/technova-api:/src:ro\" aquasec/trivy:0.56.1 config --exit-code 1 -q /src && echo 'Trivy config: nenhuma misconfiguracao'",
+      "shell": "bash",
+      "estilo": "terminal",
+      "cwd": "/mnt/c/Users/lucas/unifaat-devops-portfolio",
+      "inicio": "2026-10-14T20:14:36-03:00",
+      "fim": "2026-10-14T20:16:10-03:00",
+      "duracao_s": 94.28280339000048,
+      "retorno": 0,
+      "interrompido": false,
+      "redacoes": {},
+      "avisos": [],
+      "arquivos": [
+        {
+          "nome": "007_201436_trivy-misconfiguracao-do-dockerfile.txt",
+          "tipo": "txt",
+          "sha256": "b22509655412803bfe6da598b01ed163e5eb326d9b0d04315667fdce99b854cb"
+        },
+        {
+          "nome": "007_201436_trivy-misconfiguracao-do-dockerfile_renderizada.png",
+          "tipo": "png-renderizada",
+          "sha256": "951635c2498495ccda2a98e5086fbd002d805edc7c07a115c48a8c1333b2e09c"
+        }
+      ]
+    },
+    {
+      "numero": 8,
+      "tipo": "registro",
+      "descricao": "npm audit das dependencias de producao",
+      "comando": "cd aula-09/technova-api && npm audit --omit=dev --audit-level=critical",
+      "shell": "bash",
+      "estilo": "terminal",
+      "cwd": "/mnt/c/Users/lucas/unifaat-devops-portfolio",
+      "inicio": "2026-10-14T20:16:13-03:00",
+      "fim": "2026-10-14T20:16:15-03:00",
+      "duracao_s": 1.675454047999665,
+      "retorno": 0,
+      "interrompido": false,
+      "redacoes": {},
+      "avisos": [],
+      "arquivos": [
+        {
+          "nome": "008_201613_npm-audit-das-dependencias-de-producao.txt",
+          "tipo": "txt",
+          "sha256": "fd749addea529da844b5ae30b8c894bf9ed2d3e8bb297c5ddbf0d8e9fbef7d24"
+        },
+        {
+          "nome": "008_201613_npm-audit-das-dependencias-de-producao_renderizada.png",
+          "tipo": "png-renderizada",
+          "sha256": "2d34389f13b7ee419e7a697752dd39fe159b092571afe31e7bf93ea7f81ce2ba"
+        }
+      ]
+    },
+    {
+      "numero": 9,
+      "tipo": "registro",
+      "descricao": "AI review: PR inseguro bloqueado pelo quality gate",
+      "comando": "DIFF_FILE=aula-09/exemplos/pr-inseguro.diff REVIEW_OUTPUT=/tmp/review-inseguro.md FAIL_ON_CRITICAL=true node .github/scripts/ai-review.js",
+      "shell": "bash",
+      "estilo": "terminal",
+      "cwd": "/mnt/c/Users/lucas/unifaat-devops-portfolio",
+      "inicio": "2026-10-14T20:16:15-03:00",
+      "fim": "2026-10-14T20:16:16-03:00",
+      "duracao_s": 0.14716657399912947,
+      "retorno": 1,
+      "interrompido": false,
+      "redacoes": {},
+      "avisos": [],
+      "arquivos": [
+        {
+          "nome": "009_201615_ai-review-pr-inseguro-bloqueado-pelo-qua.txt",
+          "tipo": "txt",
+          "sha256": "73d5753522eccd67f61f9d397bcbb719457c591d169d04d86cf99ad27ef00cb5"
+        },
+        {
+          "nome": "009_201615_ai-review-pr-inseguro-bloqueado-pelo-qua_renderizada.png",
+          "tipo": "png-renderizada",
+          "sha256": "5668cba2fe90735030e29ab0da139e49dd408aeffb4154d81e42accb21b3087b"
+        }
+      ]
+    },
+    {
+      "numero": 10,
+      "tipo": "registro",
+      "descricao": "AI review: PR corrigido aprovado pelo quality gate",
+      "comando": "DIFF_FILE=aula-09/exemplos/pr-corrigido.diff REVIEW_OUTPUT=/tmp/review-corrigido.md FAIL_ON_CRITICAL=true node .github/scripts/ai-review.js",
+      "shell": "bash",
+      "estilo": "terminal",
+      "cwd": "/mnt/c/Users/lucas/unifaat-devops-portfolio",
+      "inicio": "2026-10-14T20:16:16-03:00",
+      "fim": "2026-10-14T20:16:16-03:00",
+      "duracao_s": 0.13958906599964394,
+      "retorno": 0,
+      "interrompido": false,
+      "redacoes": {},
+      "avisos": [],
+      "arquivos": [
+        {
+          "nome": "010_201616_ai-review-pr-corrigido-aprovado-pelo-qua.txt",
+          "tipo": "txt",
+          "sha256": "2af39c1e75189ad0bc67b49cf3e16392562ac56670a1933861c09413be3d81b4"
+        },
+        {
+          "nome": "010_201616_ai-review-pr-corrigido-aprovado-pelo-qua_renderizada.png",
+          "tipo": "png-renderizada",
+          "sha256": "c9f5475d0c4602d66fdcf57686a1d78c3bf9371adfffaf677f180382fdb6fca5"
+        }
+      ]
+    },
+    {
+      "numero": 11,
+      "tipo": "registro",
+      "descricao": "Container: health check, usuario nao-root e HEALTHCHECK (porta 3009)",
+      "comando": "docker rm -f technova-aula09 >/dev/null 2>&1; docker run -d --name technova-aula09 -p 3009:3000 technova-api:aula09 && sleep 12 && curl -s http://localhost:3009/health && echo && echo \"usuario: $(docker exec technova-aula09 whoami)\" && docker inspect --format 'healthcheck: {{.State.Health.Status}}' technova-aula09",
+      "shell": "bash",
+      "estilo": "terminal",
+      "cwd": "/mnt/c/Users/lucas/unifaat-devops-portfolio",
+      "inicio": "2026-10-14T20:16:34-03:00",
+      "fim": "2026-10-14T20:16:47-03:00",
+      "duracao_s": 13.331630558999677,
+      "retorno": 0,
+      "interrompido": false,
+      "redacoes": {},
+      "avisos": [],
+      "arquivos": [
+        {
+          "nome": "011_201634_container-health-check-usuario-nao-root.txt",
+          "tipo": "txt",
+          "sha256": "371b11c32c61a4ca7e0508b3ed13295c3550e8294d7c37b6082993b1394adac9"
+        },
+        {
+          "nome": "011_201634_container-health-check-usuario-nao-root_renderizada.png",
+          "tipo": "png-renderizada",
+          "sha256": "e385cd4f5aee3ee4e0d7e052fffe82dff5db5848aece8b91754779c3cfd95a2f"
+        }
+      ]
+    }
+  ]
+}

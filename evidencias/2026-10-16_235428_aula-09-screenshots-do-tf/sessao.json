@@ -1,0 +1,101 @@
+{
+  "versao_formato": 1,
+  "descricao": "aula-09 screenshots do TF",
+  "projeto": "unifaat-devops-portfolio",
+  "raiz_projeto": "C:/Users/lucas/unifaat-devops-portfolio",
+  "inicio": "2026-10-16T23:54:28-03:00",
+  "fim": "2026-10-23T12:17:22-03:00",
+  "ambiente_inicio": {
+    "so": "WSL (Ubuntu) Ubuntu 26.04 LTS",
+    "usuario": "lucaskenway",
+    "host": "DESKTOP-AMJ5UEC",
+    "python": "3.14.4",
+    "terminal": ""
+  },
+  "itens": [
+    {
+      "numero": 1,
+      "tipo": "registro",
+      "descricao": "ecr-push.sh concluido (trecho final do log 002 de 2026-10-15)",
+      "comando": "bash -c 'sed -n '\"'\"'/^Comando:/,/^Código de retorno:/p'\"'\"' evidencias/2026-10-15_211523_aula-09-ecr-push-semver-rollback/002_211708_ecr-push-sh-com-git-tag-v1-0-0-publica-1.txt; echo '\"'\"'[...]'\"'\"'; sed -n '\"'\"'/==> Tags publicadas no ECR/,/:1$/p'\"'\"' evidencias/2026-10-15_211523_aula-09-ecr-push-semver-rollback/002_211708_ecr-push-sh-com-git-tag-v1-0-0-publica-1.txt'",
+      "shell": "direto",
+      "estilo": "terminal",
+      "cwd": "/mnt/c/Users/lucas/unifaat-devops-portfolio",
+      "inicio": "2026-10-16T23:54:28-03:00",
+      "fim": "2026-10-16T23:54:28-03:00",
+      "duracao_s": 0.03608165499963434,
+      "retorno": 0,
+      "interrompido": false,
+      "redacoes": {},
+      "avisos": [],
+      "arquivos": [
+        {
+          "nome": "001_235428_ecr-push-sh-concluido-trecho-final-do-lo.txt",
+          "tipo": "txt",
+          "sha256": "ead9b0e41931e2ed0b7cf7f59c248a89a0774e8742a3111ce1a9d4f2574c2d63"
+        },
+        {
+          "nome": "001_235428_ecr-push-sh-concluido-trecho-final-do-lo_renderizada.png",
+          "tipo": "png-renderizada",
+          "sha256": "e0f2846331785125f4c3144beed3d629187f7cc878c67367d78a8814adf38bde"
+        }
+      ]
+    },
+    {
+      "numero": 2,
+      "tipo": "registro",
+      "descricao": "Repositorio ECR technova-api: imagens e tags publicadas pelos pipelines (conta 721003528272, us-east-1)",
+      "comando": "bash -c 'aws ecr describe-repositories --repository-names technova-api --query '\"'\"'repositories[0].[repositoryUri,imageScanningConfiguration.scanOnPush]'\"'\"' --output text; aws ecr describe-images --repository-name technova-api --query '\"'\"'sort_by(imageDetails,&imagePushedAt)[].[imagePushedAt,join(`, `,imageTags||[`<untagged>`]),imageDigest]'\"'\"' --output table'",
+      "shell": "direto",
+      "estilo": "terminal",
+      "cwd": "/mnt/c/Users/lucas/unifaat-devops-portfolio",
+      "inicio": "2026-10-23T12:17:04-03:00",
+      "fim": "2026-10-23T12:17:08-03:00",
+      "duracao_s": 4.451376113000151,
+      "retorno": 0,
+      "interrompido": false,
+      "redacoes": {},
+      "avisos": [],
+      "arquivos": [
+        {
+          "nome": "002_121704_repositorio-ecr-technova-api-imagens-e-t.txt",
+          "tipo": "txt",
+          "sha256": "a2cc49015a8cf1dccac5e7a6c55c42b6aa8635e82feafb0ba48e5b4a141109ea"
+        },
+        {
+          "nome": "002_121704_repositorio-ecr-technova-api-imagens-e-t_renderizada.png",
+          "tipo": "png-renderizada",
+          "sha256": "2180083faf2130397922ef027025ca1224978e6464934c9e5e729b9f3730bc5e"
+        }
+      ]
+    },
+    {
+      "numero": 3,
+      "tipo": "registro",
+      "descricao": "ECR technova-api: imagens com tag (sha-XXXXXXX por commit + latest), scan on push ativo",
+      "comando": "bash -c 'aws ecr describe-repositories --repository-names technova-api --query '\"'\"'repositories[0].[repositoryUri,imageScanningConfiguration.scanOnPush]'\"'\"' --output text; aws ecr describe-images --repository-name technova-api --filter tagStatus=TAGGED --query '\"'\"'sort_by(imageDetails,&imagePushedAt)[].[imagePushedAt,join(`,`,imageTags),imageSizeInBytes]'\"'\"' --output table'",
+      "shell": "direto",
+      "estilo": "terminal",
+      "cwd": "/mnt/c/Users/lucas/unifaat-devops-portfolio",
+      "inicio": "2026-10-23T12:17:18-03:00",
+      "fim": "2026-10-23T12:17:22-03:00",
+      "duracao_s": 3.7587540059994353,
+      "retorno": 0,
+      "interrompido": false,
+      "redacoes": {},
+      "avisos": [],
+      "arquivos": [
+        {
+          "nome": "003_121718_ecr-technova-api-imagens-com-tag-sha-xxx.txt",
+          "tipo": "txt",
+          "sha256": "528881160227a72c3cf47009aac210df417b666a8155fb132d703e0752430d99"
+        },
+        {
+          "nome": "003_121718_ecr-technova-api-imagens-com-tag-sha-xxx_renderizada.png",
+          "tipo": "png-renderizada",
+          "sha256": "2807d67eba5fc73eaf2b985bb6b61029b21cf866cd4d0f7af5449594f2080e40"
+        }
+      ]
+    }
+  ]
+}

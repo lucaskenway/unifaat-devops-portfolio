@@ -1,0 +1,65 @@
+===== EVIDÊNCIA #002 — Testes Jest com coverage =====
+Comando:            cd aula-09/technova-api && npm run test:ci
+Shell:              bash
+Diretório:          /mnt/c/Users/lucas/unifaat-devops-portfolio
+Ambiente:           WSL (Ubuntu) Ubuntu 26.04 LTS | usuário lucaskenway | host DESKTOP-AMJ5UEC
+Início:             2026-10-14T20:11:55.269-03:00
+Fim:                2026-10-14T20:13:10.241-03:00
+Duração:            74.971 s
+Código de retorno:  0 (sucesso)
+Dados sensíveis:    nenhum detectado
+Origem:             saída capturada diretamente do processo pela ferramenta evidencia 0.1.0
+
+----- SAÍDA (stdout e stderr intercalados, na ordem em que chegaram) -----
+
+> technova-api@1.0.0 test:ci
+> jest --coverage --forceExit --ci
+
+PASS __tests__/server.test.js (25.936 s)
+  Health Check
+    ✓ GET /health deve retornar status 200 (79 ms)
+    ✓ GET /health deve retornar status ok (4 ms)
+    ✓ GET /health deve retornar timestamp (3 ms)
+  Orders API
+    ✓ GET /api/orders deve retornar array (4 ms)
+    ✓ GET /api/orders deve retornar orders com campos corretos (5 ms)
+    ✓ GET /api/orders/:id deve retornar order específica (6 ms)
+    ✓ GET /api/orders/:id deve retornar 404 para id inexistente (4 ms)
+    ✓ POST /api/orders deve criar nova order (327 ms)
+    ✓ POST /api/orders deve retornar 400 sem campos obrigatórios (7 ms)
+
+-----------|---------|----------|---------|---------|-------------------
+File       | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-----------|---------|----------|---------|---------|-------------------
+All files  |   89.28 |    66.66 |   83.33 |   88.88 |                   
+ server.js |   89.28 |    66.66 |   83.33 |   88.88 | 54-56             
+-----------|---------|----------|---------|---------|-------------------
+Test Suites: 1 passed, 1 total
+Tests:       9 passed, 9 total
+Snapshots:   0 total
+Time:        32.609 s, estimated 42 s
+Ran all test suites.
+Force exiting Jest: Have you considered using `--detectOpenHandles` to detect async operations that kept running after all tests finished?
+
+----- SOMENTE STDERR -----
+PASS __tests__/server.test.js (25.936 s)
+  Health Check
+    ✓ GET /health deve retornar status 200 (79 ms)
+    ✓ GET /health deve retornar status ok (4 ms)
+    ✓ GET /health deve retornar timestamp (3 ms)
+  Orders API
+    ✓ GET /api/orders deve retornar array (4 ms)
+    ✓ GET /api/orders deve retornar orders com campos corretos (5 ms)
+    ✓ GET /api/orders/:id deve retornar order específica (6 ms)
+    ✓ GET /api/orders/:id deve retornar 404 para id inexistente (4 ms)
+    ✓ POST /api/orders deve criar nova order (327 ms)
+    ✓ POST /api/orders deve retornar 400 sem campos obrigatórios (7 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       9 passed, 9 total
+Snapshots:   0 total
+Time:        32.609 s, estimated 42 s
+Ran all test suites.
+Force exiting Jest: Have you considered using `--detectOpenHandles` to detect async operations that kept running after all tests finished?
+
+----- FIM -----

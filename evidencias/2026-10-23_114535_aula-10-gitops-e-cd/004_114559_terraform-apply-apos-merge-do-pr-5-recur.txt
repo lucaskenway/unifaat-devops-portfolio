@@ -1,0 +1,26 @@
+===== EVIDÊNCIA #004 — Terraform Apply apos merge do PR #5: recursos criados e outputs (run 39970717413) =====
+Comando:            bash -c 'gh run view 39970717413 --log | awk -F'"'"'\t'"'"' '"'"'$2=="Terraform Apply" || $2=="Outputs"'"'"' | sed -E '"'"'s/^[^\t]*\t//; s/\t[0-9TZ:.-]+ /  /'"'"' | grep -E '"'"'^[^\t]+  [^ ]'"'"' | grep -E '"'"'Creation complete|Apply complete|^Outputs  [a-z_]+ = '"'"' | sort -u -t'"'"'|'"'"' -k1,1 | head -30'
+Shell:              direto
+Diretório:          /mnt/c/Users/lucas/unifaat-devops-portfolio
+Ambiente:           WSL (Ubuntu) Ubuntu 26.04 LTS | usuário lucaskenway | host DESKTOP-AMJ5UEC
+Início:             2026-10-23T11:45:59.945-03:00
+Fim:                2026-10-23T11:46:01.712-03:00
+Duração:            1.766 s
+Código de retorno:  0 (sucesso)
+Dados sensíveis:    nenhum detectado
+Origem:             saída capturada diretamente do processo pela ferramenta evidencia 0.1.0
+
+----- SAÍDA (stdout e stderr intercalados, na ordem em que chegaram) -----
+Terraform Apply  Apply complete! Resources: 10 added, 0 changed, 0 destroyed.
+Terraform Apply  aws_instance.api: Creation complete after 13s [id=i-01ec88b1c394b4a7f]
+Terraform Apply  aws_internet_gateway.main: Creation complete after 1s [id=igw-0a0383224d3b83444]
+Terraform Apply  aws_route_table.public: Creation complete after 0s [id=rtb-05ad171a1d42e5331]
+Terraform Apply  aws_route_table_association.public: Creation complete after 1s [id=rtbassoc-0f9dff90facbcee97]
+Terraform Apply  aws_security_group.technova_api: Creation complete after 2s [id=sg-07c4e0726218d1228]
+Terraform Apply  aws_security_group_rule.api: Creation complete after 1s [id=sgrule-2616899055]
+Terraform Apply  aws_security_group_rule.egress_all: Creation complete after 1s [id=sgrule-652561247]
+Terraform Apply  aws_security_group_rule.ssh: Creation complete after 1s [id=sgrule-2404092402]
+Terraform Apply  aws_subnet.public: Creation complete after 11s [id=subnet-032ffcf8944e24efd]
+Terraform Apply  aws_vpc.main: Creation complete after 11s [id=vpc-092eb5699e40b859c]
+
+----- FIM -----

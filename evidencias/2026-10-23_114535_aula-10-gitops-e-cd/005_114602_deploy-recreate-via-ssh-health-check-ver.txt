@@ -1,0 +1,15 @@
+===== EVIDÊNCIA #005 — Deploy Recreate via SSH + health check + /version (run 39971130945) =====
+Comando:            bash -c 'gh run view 39971130945 --log | awk -F'"'"'\t'"'"' '"'"'$2=="Deploy via SSH (Recreate Strategy)" || $2=="Health Check" || $2=="Conferir versão implantada"'"'"' | sed -E '"'"'s/^[^\t]*\t//; s/\t[0-9TZ:.-]+ /  /'"'"' | grep -E '"'"'^[^\t]+  [^ ]'"'"' | grep -vE '"'"'Drone SSH|Successfully executed|^[^ ]+( [^ ]+)*  [a-f0-9]{12}: |Digest:|Pulling fs|Download|Verifying|Pull complete|Waiting'"'"''
+Shell:              direto
+Diretório:          /mnt/c/Users/lucas/unifaat-devops-portfolio
+Ambiente:           WSL (Ubuntu) Ubuntu 26.04 LTS | usuário lucaskenway | host DESKTOP-AMJ5UEC
+Início:             2026-10-23T11:46:02.479-03:00
+Fim:                2026-10-23T11:46:03.833-03:00
+Duração:            1.354 s
+Código de retorno:  1 (FALHA)
+Dados sensíveis:    nenhum detectado
+Origem:             saída capturada diretamente do processo pela ferramenta evidencia 0.1.0
+
+----- SAÍDA (stdout e stderr intercalados, na ordem em que chegaram) -----
+(o comando não produziu saída)
+----- FIM -----
