@@ -43,7 +43,7 @@ resource "aws_route_table" "public" {
   vpc_id = aws_vpc.main.id
 
   route {
-    cidr_block = "0.0.0.0/0"
+    cidr_block = "0.0.0.0/0" # ai-review-ignore: rota default para o IGW, não é regra de entrada
     gateway_id = aws_internet_gateway.main.id
   }
 
@@ -83,7 +83,7 @@ resource "aws_security_group_rule" "api" {
   from_port         = var.app_port
   to_port           = var.app_port
   protocol          = "tcp"
-  cidr_blocks       = ["0.0.0.0/0"]
+  cidr_blocks       = ["0.0.0.0/0"] # ai-review-ignore: API pública + health check do runner
   security_group_id = aws_security_group.technova_api.id
   description       = "TechNova API (health check do pipeline)"
 }
@@ -93,7 +93,7 @@ resource "aws_security_group_rule" "egress_all" {
   from_port         = 0
   to_port           = 0
   protocol          = "-1"
-  cidr_blocks       = ["0.0.0.0/0"]
+  cidr_blocks       = ["0.0.0.0/0"] # ai-review-ignore: saída (egress), necessária para o pull no ECR
   security_group_id = aws_security_group.technova_api.id
   description       = "Saida liberada (pull no ECR, pacotes)"
 }

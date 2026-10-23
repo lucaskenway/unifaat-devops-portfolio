@@ -64,7 +64,7 @@ app.post('/api/orders', (req, res) => {
 if (process.env.NODE_ENV !== 'test') {
   const PORT = process.env.PORT || 3000;
   app.listen(PORT, () => {
-    console.log(`TechNova API rodando na porta ${PORT}`);
+    console.log(`TechNova API rodando na porta ${PORT}`); // ai-review-ignore: log único de startup
   });
 }
 

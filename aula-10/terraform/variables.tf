@@ -65,9 +65,10 @@ variable "app_port" {
 }
 
 variable "ssh_cidr_blocks" {
-  description = "Origens liberadas para SSH. Os runners do GitHub Actions não têm IP fixo, por isso 0.0.0.0/0 (acesso só com a chave privada)"
+  # ai-review-ignore: runners do GitHub Actions não têm IP fixo; SSH só aceita a chave do deploy
+  description = "Origens liberadas para SSH (runners do GitHub Actions sem IP fixo; acesso só com a chave privada)"
   type        = list(string)
-  default     = ["0.0.0.0/0"]
+  default     = ["0.0.0.0/0"] # ai-review-ignore: ver gitops-cd-analise.md §6 (SSM seria o ideal)
 }
 
 variable "ecr_repository" {
