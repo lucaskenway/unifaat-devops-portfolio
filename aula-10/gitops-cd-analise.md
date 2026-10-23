@@ -148,6 +148,7 @@ Procedimento completo em [`docs/runbook-rollback.md`](docs/runbook-rollback.md).
 | Rollback manual | Depende de alguém com acesso SSH | Workflow `workflow_dispatch` de rollback recebendo a tag; rollback automático quando o health check falha |
 | Plan e apply com as mesmas permissões | Um PR malicioso poderia rodar código no plan com credenciais de escrita | Roles separadas (read-only no plan) via OIDC |
 | Plan salvo não é reaproveitado no apply | O apply recalcula; se a AWS mudou entre o PR e o merge, aplica algo diferente do revisado | Publicar o `tfplan` como artifact e aplicar exatamente ele, ou rodar plan de novo e comparar |
+| Repositório ECR compartilhado com o CI da Aula 09 | No primeiro deploy, o CI da Aula 09 (sem filtro de paths) republicou `sha-XXXXXXX` do mesmo commit e a EC2 subiu a imagem errada; o health check passou, mas a conferência de `/version` pegou e falhou o pipeline | Corrigido com filtro de paths no `ci-aula09.yml`; o ideal é um repositório ECR por serviço e tags imutáveis (`imageTagMutability=IMMUTABLE`) |
 | Sem cost estimation | Mudança cara passa despercebida | Infracost no workflow de plan |
 | Sem notificação externa | Time só vê pelo GitHub | Webhook Slack/Discord (hoje: comentário no commit + step summary) |
 
