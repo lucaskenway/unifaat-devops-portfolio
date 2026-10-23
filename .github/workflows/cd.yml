@@ -1,0 +1,299 @@
+name: CD Pipeline — Aula 10
+
+# Continuous Deployment da TechNova API:
+#   lint → test → build-push (Amazon ECR) → deploy Recreate via SSH na EC2 → health check
+#
+# Dispara em push na main (código da app ou este workflow) e também depois de um
+# Terraform Apply bem-sucedido, para reimplantar a app quando a EC2 é recriada.
+# PRs NÃO fazem deploy — o CI de PR fica no ci-aula09.yml.
+#
+# Secrets:
+#   AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY / AWS_SESSION_TOKEN  credenciais de sessão do Learner Lab
+#   EC2_SSH_KEY    chave privada do key pair technova-aula10-deploy (aula-10/scripts/bootstrap-backend.sh)
+#   EC2_USERNAME   opcional, padrão ec2-user (Amazon Linux 2023)
+#   EC2_HOST       opcional — sem ele o IP é descoberto pela tag Name da EC2 criada pelo Terraform
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'aula-10/technova-api/**'
+      - '.github/workflows/cd.yml'
+  workflow_run:
+    workflows: ['Terraform Apply — Aula 10']
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write   # comentário de notificação no commit
+  deployments: write
+
+# Deploys em fila: um deploy nunca é interrompido por outro
+concurrency:
+  group: cd-aula10
+  cancel-in-progress: false
+
+env:
+  AWS_REGION: us-east-1
+  IMAGE_NAME: technova-api
+  APP_DIR: aula-10/technova-api
+  CONTAINER_NAME: technova-api
+  APP_PORT: 3000
+  EC2_NAME_TAG: 6325226-technova-aula10-api
+
+jobs:
+  # ============================
+  # Job 1: Lint
+  # ============================
+  lint:
+    name: Lint (ESLint)
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.APP_DIR }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: aula-10/technova-api/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+
+  # ============================
+  # Job 2: Test
+  # ============================
+  test:
+    name: Tests (Jest)
+    needs: lint
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.APP_DIR }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: aula-10/technova-api/package-lock.json
+      - run: npm ci
+      - run: npm run test:ci
+
+  # ============================
+  # Job 3: Build e Push (Amazon ECR)
+  # ============================
+  build-push:
+    name: Build & Push (Amazon ECR)
+    needs: [lint, test]
+    runs-on: ubuntu-latest
+    outputs:
+      image-tag: ${{ steps.vars.outputs.tag }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configurar credenciais AWS (Learner Lab)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}   # Learner Lab exige
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login no Amazon ECR
+        id: ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Garantir o repositório ECR
+        run: |
+          aws ecr describe-repositories --repository-names "$IMAGE_NAME" >/dev/null 2>&1 \
+            || aws ecr create-repository --repository-name "$IMAGE_NAME" \
+                 --image-scanning-configuration scanOnPush=true
+
+      - name: Tag da imagem
+        id: vars
+        run: echo "tag=sha-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Extrair metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ steps.ecr.outputs.registry }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=${{ steps.vars.outputs.tag }}
+            type=raw,value=latest
+
+      # Dockerfile multi-stage (deps de produção → runtime não-root)
+      - name: Build e Push
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ env.APP_DIR }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha,scope=technova-api-aula10
+          cache-to: type=gha,mode=max,scope=technova-api-aula10
+
+  # ============================
+  # Job 4: Deploy na EC2 (Recreate) + Health Check
+  # ============================
+  deploy:
+    name: Deploy (Recreate) + Health Check
+    needs: build-push
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: http://${{ steps.host.outputs.ip }}:3000/health
+
+    steps:
+      - name: Configurar credenciais AWS (Learner Lab)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      # No Lab o IP público muda sempre que a sessão reinicia a EC2; sem EC2_HOST
+      # o pipeline descobre o IP atual pela tag Name definida no Terraform
+      - name: Descobrir host da EC2
+        id: host
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+        run: |
+          if [ -z "$EC2_HOST" ]; then
+            EC2_HOST=$(aws ec2 describe-instances \
+              --filters "Name=tag:Name,Values=$EC2_NAME_TAG" "Name=instance-state-name,Values=running" \
+              --query 'Reservations[0].Instances[0].PublicIpAddress' --output text)
+          fi
+          if [ -z "$EC2_HOST" ] || [ "$EC2_HOST" = "None" ]; then
+            echo "::error::EC2 '$EC2_NAME_TAG' não encontrada/rodando — rode o Terraform Apply ou defina o secret EC2_HOST"
+            exit 1
+          fi
+          {
+            echo "ip=$EC2_HOST"
+            echo "registry=$(aws sts get-caller-identity --query Account --output text).dkr.ecr.$AWS_REGION.amazonaws.com"
+            echo "time=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Deploy via SSH (Recreate Strategy)
+        uses: appleboy/ssh-action@v1
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+          REGISTRY: ${{ steps.host.outputs.registry }}
+          IMAGE: ${{ steps.host.outputs.registry }}/${{ env.IMAGE_NAME }}:${{ needs.build-push.outputs.image-tag }}
+          CONTAINER_NAME: ${{ env.CONTAINER_NAME }}
+          APP_PORT: ${{ env.APP_PORT }}
+          DEPLOY_SHA: ${{ github.sha }}
+          DEPLOY_TIME: ${{ steps.host.outputs.time }}
+        with:
+          host: ${{ steps.host.outputs.ip }}
+          username: ${{ secrets.EC2_USERNAME || 'ec2-user' }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          envs: AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,AWS_SESSION_TOKEN,REGISTRY,IMAGE,CONTAINER_NAME,APP_PORT,DEPLOY_SHA,DEPLOY_TIME
+          script: |
+            set -euo pipefail
+            export AWS_DEFAULT_REGION=us-east-1
+
+            # user_data pode ainda estar instalando o Docker logo após o apply
+            for _ in $(seq 1 30); do docker info >/dev/null 2>&1 && break; sleep 5; done
+
+            echo "🔐 Login no Amazon ECR (antes do pull)..."
+            aws ecr get-login-password --region us-east-1 \
+              | docker login --username AWS --password-stdin "$REGISTRY"
+
+            echo "🛑 Parando container atual..."
+            docker stop "$CONTAINER_NAME" || true
+            docker rm "$CONTAINER_NAME" || true
+
+            echo "📦 Pull da nova imagem: $IMAGE"
+            docker pull "$IMAGE"
+
+            echo "▶️ Iniciando novo container..."
+            docker run -d \
+              --name "$CONTAINER_NAME" \
+              -p "$APP_PORT:3000" \
+              --restart unless-stopped \
+              -e NODE_ENV=production \
+              -e GITHUB_SHA="$DEPLOY_SHA" \
+              -e DEPLOY_TIME="$DEPLOY_TIME" \
+              "$IMAGE"
+
+            docker ps --filter "name=$CONTAINER_NAME"
+            docker image prune -f >/dev/null
+            echo "✅ Container iniciado"
+
+      - name: Health Check
+        env:
+          HOST: ${{ steps.host.outputs.ip }}
+        run: |
+          echo "⏳ Aguardando aplicação iniciar..."
+          sleep 10
+          for i in $(seq 1 20); do
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 5 \
+              "http://$HOST:$APP_PORT/health" || true)
+            if [ "$HTTP_CODE" = "200" ]; then
+              echo "✅ Health check passed! (HTTP $HTTP_CODE, tentativa $i)"
+              curl -s "http://$HOST:$APP_PORT/health"; echo
+              exit 0
+            fi
+            echo "⏳ Tentativa $i/20 - HTTP ${HTTP_CODE:-000} - aguardando 5s..."
+            sleep 5
+          done
+          echo "❌ Health check falhou após 20 tentativas!"
+          exit 1
+
+      # Rastreabilidade: o /version tem que reportar o commit que acabou de ser implantado
+      - name: Conferir versão implantada
+        env:
+          HOST: ${{ steps.host.outputs.ip }}
+        run: |
+          VERSION=$(curl -s "http://$HOST:$APP_PORT/version")
+          echo "$VERSION"
+          echo "$VERSION" | grep -q "\"commit\":\"$GITHUB_SHA\"" \
+            || { echo "::error::/version não reporta o commit $GITHUB_SHA"; exit 1; }
+
+      - name: Notificar deploy (comentário no commit)
+        if: success()
+        uses: actions/github-script@v7
+        env:
+          HOST: ${{ steps.host.outputs.ip }}
+          TAG: ${{ needs.build-push.outputs.image-tag }}
+        with:
+          script: |
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            await github.rest.repos.createCommitComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: context.sha,
+              body: `🚀 **Deploy concluído** — \`${{ env.IMAGE_NAME }}:${process.env.TAG}\` no ar em http://${process.env.HOST}:3000 (health check OK). [Execução](${runUrl})`,
+            });
+
+      - name: Resumo
+        if: always()
+        env:
+          HOST: ${{ steps.host.outputs.ip }}
+          TAG: ${{ needs.build-push.outputs.image-tag }}
+          STATUS: ${{ job.status }}
+        run: |
+          {
+            echo "## 🚀 Deploy TechNova API — Recreate"
+            echo
+            echo "| Item | Valor |"
+            echo "|------|-------|"
+            echo "| Status | \`$STATUS\` |"
+            echo "| Imagem | \`$IMAGE_NAME:$TAG\` (+ \`latest\`) |"
+            echo "| Host | \`$HOST\` |"
+            echo "| Health | http://$HOST:$APP_PORT/health |"
+            echo "| Commit | \`$GITHUB_SHA\` |"
+            echo "| Disparado por | \`${{ github.event_name }}\` / @${{ github.actor }} |"
+          } >> "$GITHUB_STEP_SUMMARY"
