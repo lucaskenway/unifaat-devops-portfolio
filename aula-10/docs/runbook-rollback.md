@@ -96,4 +96,5 @@ Avisar o time com: versão revertida, versão em produção agora, horário, cau
 
 | Data | De → para | Resultado |
 |------|-----------|-----------|
-| _(preencher ao executar no Lab)_ | `sha-novo` → `sha-anterior` | `/version` voltou ao commit anterior, `/health` 200 |
+| 2026-10-23 11:52 (BRT) | `dccfde1` (main) → `sha-abd19a4` | Login no ECR → pull → stop → rm → run; `/health` 200 e `/version` = `rollback-sha-abd19a4` (local e externo) |
+| 2026-10-23 11:53 (BRT) | `sha-abd19a4` → `dccfde1` | Retorno à main reexecutando o `cd.yml` (`workflow_dispatch`, run 39973365347), health check OK |

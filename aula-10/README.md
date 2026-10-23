@@ -108,7 +108,20 @@ cd ../terraform && terraform fmt -check && terraform init && terraform plan
 
 | Screenshot | O que mostra |
 |------------|--------------|
-| `screenshots/plan-pr-comment.png` | Comentário do Terraform Plan no PR |
-| `screenshots/apply-success.png` | Terraform Apply verde após o merge |
-| `screenshots/cd-pipeline-green.png` | lint → test → build-push → deploy verdes |
-| `screenshots/health-check-pass.png` | Log "✅ Health check passed!" |
+| [`screenshots/plan-pr-comment.png`](screenshots/plan-pr-comment.png) | Plan comentado no PR #5 (infra inicial, 10 to add; comentário *edited* = atualizado, não duplicado) |
+| [`screenshots/plan-pr-comment-https.png`](screenshots/plan-pr-comment-https.png) | Plan do PR #8 (regra HTTPS, 1 to add) com o plan completo |
+| [`screenshots/apply-success.png`](screenshots/apply-success.png) | Terraform Apply verde após o merge do PR #5 |
+| [`screenshots/cd-pipeline-green.png`](screenshots/cd-pipeline-green.png) | CD: lint → test → build-push → deploy verdes |
+| [`screenshots/health-check-pass.png`](screenshots/health-check-pass.png) | Log do health check e do `/version` (imagem renderizada do log real do run) |
+
+Execuções:
+
+| O quê | PR / run |
+|-------|----------|
+| Plan no PR (infra inicial) | [PR #5](https://github.com/lucaskenway/unifaat-devops-portfolio/pull/5) |
+| Apply após merge (10 recursos) | [run 39970717413](https://github.com/lucaskenway/unifaat-devops-portfolio/actions/runs/39970717413) |
+| CD completo (merge do PR #6) | [run 39971130945](https://github.com/lucaskenway/unifaat-devops-portfolio/actions/runs/39971130945) |
+| GitOps end-to-end: plan (1 to add) → apply → CD via `workflow_run` | [PR #8](https://github.com/lucaskenway/unifaat-devops-portfolio/pull/8) · [apply 39972897118](https://github.com/lucaskenway/unifaat-devops-portfolio/actions/runs/39972897118) · [CD 39972962601](https://github.com/lucaskenway/unifaat-devops-portfolio/actions/runs/39972962601) |
+| Retorno à main após o teste de rollback | [run 39973365347](https://github.com/lucaskenway/unifaat-devops-portfolio/actions/runs/39973365347) |
+
+No primeiro deploy, a conferência de `/version` falhou o pipeline porque o CI da Aula 09 tinha sobrescrito a tag `sha-XXXXXXX` no ECR ([PR #7](https://github.com/lucaskenway/unifaat-devops-portfolio/pull/7) corrigiu); detalhes em `gitops-cd-analise.md` §6.
