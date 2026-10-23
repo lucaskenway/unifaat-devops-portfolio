@@ -13,6 +13,11 @@ on:
   push:
     branches: [main]
     tags: ['v*.*.*']
+    # só a app da Aula 09: sem isso todo push na main republicava sha-XXXXXXX no mesmo
+    # repositório ECR e sobrescrevia a imagem implantada pelo CD da Aula 10
+    paths:
+      - 'aula-09/technova-api/**'
+      - '.github/workflows/ci-aula09.yml'
   pull_request:
     branches: [main]
     paths:
