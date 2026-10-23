@@ -1,0 +1,59 @@
+name: Terraform Destroy — Aula 10
+
+# Destroy nunca é automático: só por disparo manual, digitando "destroy" e
+# passando pela aprovação do environment production-destroy (required reviewers).
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Digite "destroy" para confirmar a destruição da infra da Aula 10'
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: terraform-aula10
+  cancel-in-progress: false
+
+env:
+  AWS_REGION: us-east-1
+  TF_WORKING_DIR: aula-10/terraform
+
+jobs:
+  terraform-destroy:
+    name: Terraform Destroy
+    if: inputs.confirm == 'destroy'
+    runs-on: ubuntu-latest
+    environment: production-destroy
+    defaults:
+      run:
+        working-directory: ${{ env.TF_WORKING_DIR }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configurar credenciais AWS (Learner Lab)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.8
+          terraform_wrapper: false
+
+      - name: Terraform Init
+        # bucket do state = technova-tfstate-<ACCOUNT_ID> (conta do Lab muda entre sessões)
+        run: |
+          terraform init -input=false -no-color \
+            -backend-config="bucket=technova-tfstate-$(aws sts get-caller-identity --query Account --output text)"
+
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve -input=false -no-color
