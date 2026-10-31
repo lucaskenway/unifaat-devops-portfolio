@@ -1,0 +1,264 @@
+name: Deploy Blue/Green — Aula 11
+
+# Blue/Green da TechNova API atrás do ALB (aula-11/terraform):
+#   test → build-push (Amazon ECR) → deploy no ambiente OCIOSO → health check do Target Group
+#   → traffic switch (listener HTTP:80) → validação pelo DNS do ALB → rollback automático se falhar
+#
+# A cada deploy as cores se alternam: se Blue está ativo, a versão nova vai para Green e
+# vice-versa. O ambiente antigo continua rodando — é ele que garante o rollback em segundos.
+#
+# Secrets (os mesmos da Aula 10):
+#   AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY / AWS_SESSION_TOKEN  credenciais de sessão do Learner Lab
+#   EC2_SSH_KEY       chave privada do key pair technova-aula10-deploy
+#   DISCORD_WEBHOOK   opcional — notificação de rollback
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'aula-11/technova-api/**'
+      - 'aula-11/scripts/bluegreen.sh'
+      - '.github/workflows/deploy-blue-green.yml'
+  workflow_dispatch:
+    inputs:
+      simulate_failure:
+        description: 'Implanta a versão nova com SIMULATE_ERRORS=true (testa o rollback automático)'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write   # comentário de notificação no commit
+
+# Nunca dois switches ao mesmo tempo
+concurrency:
+  group: deploy-blue-green-aula11
+  cancel-in-progress: false
+
+env:
+  AWS_REGION: us-east-1
+  IMAGE_NAME: technova-api
+  APP_DIR: aula-11/technova-api
+  CONTAINER_NAME: technova-api
+  APP_PORT: 3000
+  BLUEGREEN: aula-11/scripts/bluegreen.sh
+
+jobs:
+  # ============================
+  # Job 1: Lint + Test
+  # ============================
+  test:
+    name: Lint & Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.APP_DIR }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: aula-11/technova-api/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run test:ci
+
+  # ============================
+  # Job 2: Build e Push (Amazon ECR)
+  # ============================
+  build-push:
+    name: Build & Push (Amazon ECR)
+    needs: test
+    runs-on: ubuntu-latest
+    outputs:
+      image-tag: ${{ steps.vars.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configurar credenciais AWS (Learner Lab)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login no Amazon ECR
+        id: ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Garantir o repositório ECR e a lifecycle policy
+        run: |
+          aws ecr describe-repositories --repository-names "$IMAGE_NAME" >/dev/null 2>&1 \
+            || aws ecr create-repository --repository-name "$IMAGE_NAME" \
+                 --image-scanning-configuration scanOnPush=true
+          # Limpa imagens antigas dos deploys (mesma policy da Aula 09)
+          aws ecr put-lifecycle-policy --repository-name "$IMAGE_NAME" \
+            --lifecycle-policy-text file://aula-09/technova-api/ecr-lifecycle-policy.json >/dev/null
+
+      # Tag própria (bg-) para não colidir com os sha- das Aulas 09/10 no mesmo repositório
+      - name: Tag da imagem
+        id: vars
+        run: echo "tag=bg-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build e Push
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ env.APP_DIR }}
+          push: true
+          tags: ${{ steps.ecr.outputs.registry }}/${{ env.IMAGE_NAME }}:${{ steps.vars.outputs.tag }}
+          cache-from: type=gha,scope=technova-api-aula11
+          cache-to: type=gha,mode=max,scope=technova-api-aula11
+
+  # ============================
+  # Job 3: Blue/Green
+  # ============================
+  deploy:
+    name: Blue/Green (deploy → switch → validação)
+    needs: build-push
+    runs-on: ubuntu-latest
+    environment:
+      name: production-aula11
+      url: http://${{ steps.target.outputs.alb_dns }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configurar credenciais AWS (Learner Lab)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Estado atual
+        run: bash "$BLUEGREEN" status
+
+      # Ativo = para onde o listener aponta agora; ocioso = onde a versão nova entra
+      - name: Descobrir ambiente ocioso
+        id: target
+        run: |
+          bash "$BLUEGREEN" idle | tee -a "$GITHUB_OUTPUT"
+          {
+            echo "registry=$(aws sts get-caller-identity --query Account --output text).dkr.ecr.$AWS_REGION.amazonaws.com"
+            echo "time=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Deploy no ambiente ocioso (${{ steps.target.outputs.idle }})
+        uses: appleboy/ssh-action@v1
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+          REGISTRY: ${{ steps.target.outputs.registry }}
+          IMAGE: ${{ steps.target.outputs.registry }}/${{ env.IMAGE_NAME }}:${{ needs.build-push.outputs.image-tag }}
+          CONTAINER_NAME: ${{ env.CONTAINER_NAME }}
+          APP_PORT: ${{ env.APP_PORT }}
+          APP_COLOR: ${{ steps.target.outputs.idle }}
+          SIMULATE_ERRORS: ${{ inputs.simulate_failure && 'true' || 'false' }}
+          DEPLOY_SHA: ${{ github.sha }}
+          DEPLOY_TIME: ${{ steps.target.outputs.time }}
+        with:
+          host: ${{ steps.target.outputs.idle_ip }}
+          username: ec2-user
+          key: ${{ secrets.EC2_SSH_KEY }}
+          envs: AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,AWS_SESSION_TOKEN,REGISTRY,IMAGE,CONTAINER_NAME,APP_PORT,APP_COLOR,SIMULATE_ERRORS,DEPLOY_SHA,DEPLOY_TIME
+          script: |
+            set -euo pipefail
+            export AWS_DEFAULT_REGION=us-east-1
+
+            # user_data pode ainda estar instalando o Docker logo após o apply
+            for _ in $(seq 1 30); do docker info >/dev/null 2>&1 && break; sleep 5; done
+
+            echo "🔐 Login no Amazon ECR (antes do pull)..."
+            aws ecr get-login-password --region us-east-1 \
+              | docker login --username AWS --password-stdin "$REGISTRY"
+
+            echo "📦 Pull da nova imagem: $IMAGE"
+            docker pull "$IMAGE"
+
+            # Este ambiente não recebe tráfego, então pode ser recriado sem downtime
+            docker rm -f "$CONTAINER_NAME" 2>/dev/null || true
+            docker run -d \
+              --name "$CONTAINER_NAME" \
+              -p "$APP_PORT:3000" \
+              --restart unless-stopped \
+              -e NODE_ENV=production \
+              -e APP_COLOR="$APP_COLOR" \
+              -e SIMULATE_ERRORS="$SIMULATE_ERRORS" \
+              -e GITHUB_SHA="$DEPLOY_SHA" \
+              -e DEPLOY_TIME="$DEPLOY_TIME" \
+              "$IMAGE"
+
+            docker ps --filter "name=$CONTAINER_NAME"
+            docker image prune -f >/dev/null
+            echo "✅ $APP_COLOR rodando $IMAGE (SIMULATE_ERRORS=$SIMULATE_ERRORS)"
+
+      - name: Aguardar health check do Target Group ${{ steps.target.outputs.idle }}
+        run: bash "$BLUEGREEN" wait-healthy "${{ steps.target.outputs.idle }}"
+
+      - name: Traffic switch (${{ steps.target.outputs.active }} → ${{ steps.target.outputs.idle }})
+        id: switch
+        run: bash "$BLUEGREEN" switch "${{ steps.target.outputs.idle }}"
+
+      - name: Validar o ALB depois do switch
+        id: validate
+        run: bash "$BLUEGREEN" validate "${{ steps.target.outputs.idle }}" "$GITHUB_SHA"
+
+      # Só reverte se o switch aconteceu; uma falha antes dele deixa o ativo intocado
+      - name: Rollback automático (→ ${{ steps.target.outputs.active }})
+        id: rollback
+        if: failure() && steps.switch.outcome == 'success'
+        run: |
+          bash "$BLUEGREEN" switch "${{ steps.target.outputs.active }}"
+          bash "$BLUEGREEN" validate "${{ steps.target.outputs.active }}"
+          bash "$BLUEGREEN" status
+
+      - name: Notificar rollback
+        if: failure() && steps.rollback.outcome == 'success'
+        uses: actions/github-script@v7
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          FROM: ${{ steps.target.outputs.idle }}
+          TO: ${{ steps.target.outputs.active }}
+        with:
+          script: |
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const msg = `⏪ **Rollback automático** — a validação de \`${process.env.FROM}\` falhou depois do switch; ` +
+              `o tráfego voltou para \`${process.env.TO}\`. [Execução](${runUrl})`;
+            await github.rest.repos.createCommitComment({
+              owner: context.repo.owner, repo: context.repo.repo, commit_sha: context.sha, body: msg,
+            });
+            if (process.env.DISCORD_WEBHOOK) {
+              await fetch(process.env.DISCORD_WEBHOOK, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content: msg }),
+              });
+            }
+
+      - name: Resumo
+        if: always()
+        env:
+          ALB: ${{ steps.target.outputs.alb_dns }}
+          FROM: ${{ steps.target.outputs.active }}
+          TO: ${{ steps.target.outputs.idle }}
+          TAG: ${{ needs.build-push.outputs.image-tag }}
+          SWITCH: ${{ steps.switch.outcome }}
+          VALIDATE: ${{ steps.validate.outcome }}
+          ROLLBACK: ${{ steps.rollback.outcome }}
+        run: |
+          {
+            echo "## 🔵🟢 Deploy Blue/Green — TechNova API"
+            echo
+            echo "| Item | Valor |"
+            echo "|------|-------|"
+            echo "| Imagem | \`$IMAGE_NAME:$TAG\` |"
+            echo "| Switch | \`$FROM\` → \`$TO\` ($SWITCH) |"
+            echo "| Validação pós-switch | \`$VALIDATE\` |"
+            echo "| Rollback | \`${ROLLBACK:-não necessário}\` |"
+            echo "| ALB | http://$ALB |"
+            echo "| Commit | \`$GITHUB_SHA\` |"
+          } >> "$GITHUB_STEP_SUMMARY"
