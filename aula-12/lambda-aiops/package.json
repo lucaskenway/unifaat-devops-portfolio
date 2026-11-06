@@ -1,0 +1,16 @@
+{
+  "name": "technova-aiops-analyzer",
+  "version": "1.0.0",
+  "description": "Lambda AIOps - análise inteligente de alarmes do CloudWatch com Bedrock (fallback por regras)",
+  "main": "index.js",
+  "scripts": {
+    "simulate": "node local-simulator.js all"
+  },
+  "engines": { "node": ">=20" },
+  "devDependencies": {
+    "@aws-sdk/client-bedrock-runtime": "^3.700.0",
+    "@aws-sdk/client-cloudwatch": "^3.700.0",
+    "@aws-sdk/client-cloudwatch-logs": "^3.700.0",
+    "@aws-sdk/client-sns": "^3.700.0"
+  }
+}

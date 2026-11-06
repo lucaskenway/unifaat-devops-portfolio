@@ -1,0 +1,16 @@
+{
+  "source": "aws.cloudwatch",
+  "detail-type": "CloudWatch Alarm State Change",
+  "detail": {
+    "alarmName": "TechNova-HighLatency",
+    "state": {
+      "value": "ALARM",
+      "reason": "Threshold Crossed: Average ResponseTime > 1000 por 3 períodos (evento de teste)",
+      "timestamp": "2026-11-06T22:00:00Z"
+    },
+    "previousState": { "value": "OK" },
+    "configuration": {
+      "metrics": [{ "metricStat": { "metric": { "namespace": "TechNova/API", "name": "ResponseTime" } } }]
+    }
+  }
+}

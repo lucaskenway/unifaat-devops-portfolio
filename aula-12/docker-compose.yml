@@ -1,0 +1,27 @@
+# Ambiente local: API + PostgreSQL para testar as migrações up/down
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres # ai-review-ignore: credencial só do banco local de teste
+      POSTGRES_DB: technova
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/001-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d technova"]
+      interval: 3s
+      retries: 20
+
+  api:
+    build: .
+    ports:
+      - "3000:3000"
+    env_file: .env.example
+    environment:
+      NODE_ENV: development
+    depends_on:
+      postgres:
+        condition: service_healthy
