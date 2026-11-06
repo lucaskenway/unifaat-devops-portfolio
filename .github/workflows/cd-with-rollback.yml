@@ -1,0 +1,237 @@
+name: CD with Automated Rollback — Aula 12
+
+# Deploy da TechNova API (aula-12) com rollback automático:
+#   test → build-push (Amazon ECR) → deploy na EC2 → janela de observação (health check)
+#   → se falhar: rollback para a imagem anterior + notificação SNS + workflow vermelho
+#
+# A imagem "anterior" é descoberta ANTES do deploy pelo /version de produção (imageTag)
+# e gravada no label previous.version do container novo — scripts/rollback.sh usa o
+# mesmo label no rollback manual (runbook).
+#
+# Secrets: AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY / AWS_SESSION_TOKEN (Learner Lab)
+#          EC2_SSH_KEY (chave privada do key pair technova-aula10-deploy)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'aula-12/**'
+      - '!aula-12/**/*.md'
+      - '!aula-12/screenshots/**'
+      - '!aula-12/terraform/**'
+      - '!aula-12/lambda-aiops/**'
+      - '.github/workflows/cd-with-rollback.yml'
+  workflow_dispatch:
+    inputs:
+      simulate_failure:
+        description: 'Sobe a versão nova com FAIL_HEALTHCHECK=true (/health → 503) para testar o rollback'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cd-aula12
+  cancel-in-progress: false
+
+env:
+  AWS_REGION: us-east-1
+  IMAGE_NAME: technova-api
+  APP_DIR: aula-12
+  CONTAINER_NAME: technova-api
+  EC2_NAME_TAG: 6325226-technova-aula12-api
+  SNS_TOPIC_NAME: technova-alerts
+
+jobs:
+  test:
+    name: Lint + Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.APP_DIR }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: aula-12/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run test:ci
+
+  build-push:
+    name: Build & Push (Amazon ECR)
+    needs: test
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.vars.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: ${{ env.AWS_REGION }}
+      - id: ecr
+        uses: aws-actions/amazon-ecr-login@v2
+      - name: Garantir o repositório ECR
+        run: |
+          aws ecr describe-repositories --repository-names "$IMAGE_NAME" >/dev/null 2>&1 \
+            || aws ecr create-repository --repository-name "$IMAGE_NAME" --image-scanning-configuration scanOnPush=true
+      - id: vars
+        run: echo "tag=a12-sha-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+      - name: Build e Push
+        env:
+          IMAGE: ${{ steps.ecr.outputs.registry }}/${{ env.IMAGE_NAME }}:${{ steps.vars.outputs.tag }}
+        run: |
+          docker build -t "$IMAGE" "$APP_DIR"
+          docker push "$IMAGE"
+
+  deploy:
+    name: Deploy + Observação + Rollback automático
+    needs: build-push
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: http://${{ steps.host.outputs.ip }}:3000/health
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Descobrir EC2 e registry
+        id: host
+        run: |
+          IP=$(aws ec2 describe-instances \
+            --filters "Name=tag:Name,Values=$EC2_NAME_TAG" "Name=instance-state-name,Values=running" \
+            --query 'Reservations[0].Instances[0].PublicIpAddress' --output text)
+          if [ -z "$IP" ] || [ "$IP" = "None" ]; then
+            echo "::error::EC2 '$EC2_NAME_TAG' não está rodando — terraform apply em aula-12/terraform"
+            exit 1
+          fi
+          ACCOUNT=$(aws sts get-caller-identity --query Account --output text)
+          {
+            echo "ip=$IP"
+            echo "repo=$ACCOUNT.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_NAME"
+            echo "sns=arn:aws:sns:$AWS_REGION:$ACCOUNT:$SNS_TOPIC_NAME"
+            echo "time=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Versão em produção (alvo do rollback)
+        id: previous
+        env:
+          HOST: ${{ steps.host.outputs.ip }}
+        run: |
+          PREV=$(curl -s -f --max-time 5 "http://$HOST:3000/version" | jq -r '.imageTag // empty' || true)
+          echo "tag=$PREV" >> "$GITHUB_OUTPUT"
+          echo "📋 Em produção antes do deploy: ${PREV:-(nada — primeiro deploy)}"
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1
+        env:
+          REPO: ${{ steps.host.outputs.repo }}
+          TAG: ${{ needs.build-push.outputs.tag }}
+          PREV: ${{ steps.previous.outputs.tag }}
+          DEPLOY_SHA: ${{ github.sha }}
+          DEPLOY_TIME: ${{ steps.host.outputs.time }}
+          FAIL: ${{ inputs.simulate_failure && 'true' || 'false' }}
+        with:
+          host: ${{ steps.host.outputs.ip }}
+          username: ec2-user
+          key: ${{ secrets.EC2_SSH_KEY }}
+          envs: REPO,TAG,PREV,DEPLOY_SHA,DEPLOY_TIME,FAIL
+          script: |
+            set -euo pipefail
+            for _ in $(seq 1 30); do docker info >/dev/null 2>&1 && break; sleep 5; done
+            aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin "${REPO%%/*}"
+            docker pull "$REPO:$TAG"
+            docker rm -f technova-api >/dev/null 2>&1 || true
+            echo "🚀 Subindo $TAG (anterior: ${PREV:-nenhuma}, FAIL_HEALTHCHECK=$FAIL)"
+            docker run -d --name technova-api \
+              -p 3000:3000 --restart unless-stopped \
+              --env-file /home/ec2-user/technova.env \
+              -e GITHUB_SHA="$DEPLOY_SHA" -e IMAGE_TAG="$TAG" -e DEPLOY_TIME="$DEPLOY_TIME" \
+              -e FAIL_HEALTHCHECK="$FAIL" \
+              --label "previous.version=$PREV" \
+              --log-driver awslogs --log-opt awslogs-region=us-east-1 \
+              --log-opt awslogs-group=/technova/api --log-opt awslogs-create-group=true \
+              "$REPO:$TAG"
+            docker image prune -f >/dev/null
+
+      - name: Janela de observação (health check 6x10s, tolera 2 falhas)
+        id: healthcheck
+        continue-on-error: true
+        env:
+          HOST: ${{ steps.host.outputs.ip }}
+        run: |
+          sleep 15   # estabilização
+          bash "$APP_DIR/scripts/health-check.sh" "$HOST" 3000 6 10 2
+
+      - name: 🚨 Rollback automático
+        id: rollback
+        if: steps.healthcheck.outcome == 'failure' && steps.previous.outputs.tag != ''
+        uses: appleboy/ssh-action@v1
+        env:
+          ECR_URI: ${{ steps.host.outputs.repo }}
+        with:
+          host: ${{ steps.host.outputs.ip }}
+          username: ec2-user
+          key: ${{ secrets.EC2_SSH_KEY }}
+          envs: ECR_URI
+          # O mesmo script do rollback manual do runbook: lê a tag anterior do label
+          # previous.version que o deploy gravou no container que falhou
+          script_path: aula-12/scripts/rollback.sh
+
+      - name: Conferir versão restaurada
+        if: steps.healthcheck.outcome == 'failure' && steps.previous.outputs.tag != ''
+        env:
+          HOST: ${{ steps.host.outputs.ip }}
+          PREV: ${{ steps.previous.outputs.tag }}
+        run: |
+          V=$(curl -s --max-time 5 "http://$HOST:3000/version")
+          echo "$V"
+          echo "$V" | jq -e --arg t "$PREV" '.imageTag == $t' >/dev/null \
+            || { echo "::error::produção não voltou para $PREV"; exit 1; }
+          bash "$APP_DIR/scripts/health-check.sh" "$HOST" 3000 3 5 0
+
+      - name: Notificar rollback (SNS) e marcar o workflow como falho
+        if: steps.healthcheck.outcome == 'failure'
+        env:
+          SNS: ${{ steps.host.outputs.sns }}
+          TAG: ${{ needs.build-push.outputs.tag }}
+          PREV: ${{ steps.previous.outputs.tag }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [ -n "$PREV" ]; then
+            MSG="Deploy $TAG REVERTIDO automaticamente para $PREV: health check falhou na janela de observação. $RUN_URL"
+          else
+            MSG="Deploy $TAG falhou no health check e NÃO há versão anterior para reverter. $RUN_URL"
+          fi
+          aws sns publish --topic-arn "$SNS" --subject "[P1] TechNova: rollback automático" --message "$MSG" \
+            || echo "::warning::SNS indisponível — notificação só no log"
+          echo "::error::🚨 $MSG"
+          {
+            echo "## 🚨 Rollback automático"
+            echo "| Item | Valor |"
+            echo "|---|---|"
+            echo "| Versão com falha | \`$TAG\` |"
+            echo "| Versão restaurada | \`${PREV:-nenhuma}\` |"
+            echo "| Notificação | SNS \`$SNS\` |"
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit 1
+
+      - name: Deploy concluído
+        if: steps.healthcheck.outcome == 'success'
+        env:
+          TAG: ${{ needs.build-push.outputs.tag }}
+          HOST: ${{ steps.host.outputs.ip }}
+        run: |
+          echo "🎉 $TAG no ar — http://$HOST:3000/version"
+          echo "## ✅ Deploy \`$TAG\` OK — health check passou" >> "$GITHUB_STEP_SUMMARY"
