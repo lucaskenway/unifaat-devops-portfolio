@@ -31,3 +31,30 @@ resource "aws_lb_listener" "http" {
     ignore_changes = [default_action]
   }
 }
+
+# =============================================================
+# LISTENER DE HEALTH CHECK — o ALB só faz health check de Target Group
+# associado a algum listener; sem isto o TG ocioso fica "unused"
+# (Target.NotInUse) e o deploy no ambiente ocioso nunca fica healthy.
+# Porta 8080 NÃO é liberada no SG do ALB: o listener existe só para manter
+# Blue e Green "em uso" e com health check ativo o tempo todo.
+# =============================================================
+
+resource "aws_lb_listener" "healthcheck" {
+  load_balancer_arn = aws_lb.main.arn
+  port              = 8080
+  protocol          = "HTTP"
+
+  default_action {
+    type = "forward"
+    forward {
+      dynamic "target_group" {
+        for_each = aws_lb_target_group.app
+        content {
+          arn    = target_group.value.arn
+          weight = 1
+        }
+      }
+    }
+  }
+}
