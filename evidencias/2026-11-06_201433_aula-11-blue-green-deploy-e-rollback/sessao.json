@@ -1,0 +1,101 @@
+{
+  "versao_formato": 1,
+  "descricao": "aula-11 blue-green deploy e rollback",
+  "projeto": "unifaat-devops-portfolio",
+  "raiz_projeto": "C:/Users/lucas/unifaat-devops-portfolio",
+  "inicio": "2026-11-06T20:14:33-03:00",
+  "fim": "2026-11-06T20:16:25-03:00",
+  "ambiente_inicio": {
+    "so": "WSL (Ubuntu) Ubuntu 26.04 LTS",
+    "usuario": "lucaskenway",
+    "host": "DESKTOP-AMJ5UEC",
+    "python": "3.14.4",
+    "terminal": ""
+  },
+  "itens": [
+    {
+      "numero": 1,
+      "tipo": "registro",
+      "descricao": "Log real do deploy Blue/Green e do rollback automatico da aula 11 (runs 42309886648 e 42310187138)",
+      "comando": "bash -c 'for r in 42309886648 42310187138; do echo \"===== run $r =====\"; gh run view $r -R lucaskenway/unifaat-devops-portfolio --log | sed '\"'\"'s/^[^\\t]*\\t[^\\t]*\\t//'\"'\"' | grep -vE '\"'\"'\\[36;1m|^ +[A-Z_]+: '\"'\"' | grep -E '\"'\"'^20.*(🔀|✅|❌ requisição 1/|ERRO|ativo|ocioso|healthy|rollback|ROLLBACK)'\"'\"' | grep -v '\"'\"'requisição [2-9]'\"'\"' | head -25; done'",
+      "shell": "direto",
+      "estilo": "terminal",
+      "cwd": "/mnt/c/Users/lucas/unifaat-devops-portfolio",
+      "inicio": "2026-11-06T20:14:33-03:00",
+      "fim": "2026-11-06T20:14:39-03:00",
+      "duracao_s": 5.870219749000171,
+      "retorno": 0,
+      "interrompido": false,
+      "redacoes": {},
+      "avisos": [],
+      "arquivos": [
+        {
+          "nome": "001_201433_log-real-do-deploy-blue-green-e-do-rollb.txt",
+          "tipo": "txt",
+          "sha256": "63be5e0d6d3e4c855d88a310f04dfcb2bf953ea595bb1b5ef343401fd4b63ebf"
+        },
+        {
+          "nome": "001_201433_log-real-do-deploy-blue-green-e-do-rollb_renderizada.png",
+          "tipo": "png-renderizada",
+          "sha256": "92a2da8d443a35a75ad15c6681a707906d9d43f8c5c32ee311ce6f13067c106c"
+        }
+      ]
+    },
+    {
+      "numero": 2,
+      "tipo": "registro",
+      "descricao": "Log real do deploy Blue/Green e do rollback automatico da aula 11 (runs 42309886648 e 42310187138) - filtro corrigido",
+      "comando": "bash -c 'for r in 42309886648 42310187138; do echo \"===== run $r =====\"; gh run view $r -R lucaskenway/unifaat-devops-portfolio --log | sed '\"'\"'s/^[^\\t]*\\t[^\\t]*\\t//'\"'\"' | grep -E '\"'\"'\\] '\"'\"' | grep -vE '\"'\"'\\[36;1m|requisição ([2-9]|1[0-9]|20)/|aguardando|target group .*: (initial|unused)'\"'\"' | sed '\"'\"'s/^[0-9T:.-]*Z //'\"'\"' | head -30; done'",
+      "shell": "direto",
+      "estilo": "terminal",
+      "cwd": "/mnt/c/Users/lucas/unifaat-devops-portfolio",
+      "inicio": "2026-11-06T20:14:51-03:00",
+      "fim": "2026-11-06T20:14:54-03:00",
+      "duracao_s": 2.615029403000335,
+      "retorno": 0,
+      "interrompido": false,
+      "redacoes": {},
+      "avisos": [],
+      "arquivos": [
+        {
+          "nome": "002_201451_log-real-do-deploy-blue-green-e-do-rollb.txt",
+          "tipo": "txt",
+          "sha256": "9bdb9244363c853c4ee6e01423d17fe8df442e724e2c13ca789a19c54978b767"
+        },
+        {
+          "nome": "002_201451_log-real-do-deploy-blue-green-e-do-rollb_renderizada.png",
+          "tipo": "png-renderizada",
+          "sha256": "4c14bc10e59ca37c3b8f8654f4000da56bcc6457d9683ac7b99e240eabb0f38e"
+        }
+      ]
+    },
+    {
+      "numero": 3,
+      "tipo": "registro",
+      "descricao": "Log real do deploy Blue/Green e do rollback automatico da aula 11 (runs 42309886648 e 42310187138) - via API de jobs",
+      "comando": "bash -c 'bash aula-11/scripts/log-run.sh 42309886648; bash aula-11/scripts/log-run.sh 42310187138'",
+      "shell": "direto",
+      "estilo": "terminal",
+      "cwd": "/mnt/c/Users/lucas/unifaat-devops-portfolio",
+      "inicio": "2026-11-06T20:15:08-03:00",
+      "fim": "2026-11-06T20:15:14-03:00",
+      "duracao_s": 6.256907895999575,
+      "retorno": 0,
+      "interrompido": false,
+      "redacoes": {},
+      "avisos": [],
+      "arquivos": [
+        {
+          "nome": "003_201508_log-real-do-deploy-blue-green-e-do-rollb.txt",
+          "tipo": "txt",
+          "sha256": "2a0b9b7790777b24a7d033c1c8ebad3b1180d7489e50b34044a3a864c85b1cd2"
+        },
+        {
+          "nome": "003_201508_log-real-do-deploy-blue-green-e-do-rollb_renderizada.png",
+          "tipo": "png-renderizada",
+          "sha256": "9eda76dda7107ddee16cc2e09b0c7f41099551838df78cc5cfbda3e091e3886e"
+        }
+      ]
+    }
+  ]
+}

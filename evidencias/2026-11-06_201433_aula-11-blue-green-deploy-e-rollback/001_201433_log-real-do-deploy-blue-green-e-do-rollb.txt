@@ -1,0 +1,22 @@
+===== EVIDÊNCIA #001 — Log real do deploy Blue/Green e do rollback automatico da aula 11 (runs 42309886648 e 42310187138) =====
+Comando:            bash -c 'for r in 42309886648 42310187138; do echo "===== run $r ====="; gh run view $r -R lucaskenway/unifaat-devops-portfolio --log | sed '"'"'s/^[^\t]*\t[^\t]*\t//'"'"' | grep -vE '"'"'\[36;1m|^ +[A-Z_]+: '"'"' | grep -E '"'"'^20.*(🔀|✅|❌ requisição 1/|ERRO|ativo|ocioso|healthy|rollback|ROLLBACK)'"'"' | grep -v '"'"'requisição [2-9]'"'"' | head -25; done'
+Shell:              direto
+Diretório:          /mnt/c/Users/lucas/unifaat-devops-portfolio
+Ambiente:           WSL (Ubuntu) Ubuntu 26.04 LTS | usuário lucaskenway | host DESKTOP-AMJ5UEC
+Início:             2026-11-06T20:14:33.729-03:00
+Fim:                2026-11-06T20:14:39.600-03:00
+Duração:            5.870 s
+Código de retorno:  0 (sucesso)
+Dados sensíveis:    nenhum detectado
+Origem:             saída capturada diretamente do processo pela ferramenta evidencia 0.1.0
+
+----- SAÍDA (stdout e stderr intercalados, na ordem em que chegaram) -----
+===== run 42309886648 =====
+2026-11-06T23:09:13.8041347Z   Injeção de falha (SIMULATE_ERRORS)
+2026-11-06T23:09:13.8041919Z     ✓ mantém o /health em 200 (o target continua healthy) (2 ms)
+2026-11-06T23:09:34.9054897Z               "message": "fix(aula-11): validação espera a propagação do switch no ALB\n\nNo teste de rollback (run 42309289411) a validação pós-rollback viu 4/20\nrequisições ainda servidas pelo blue: o modify-listener leva alguns segundos\npara valer em todos os nós do ALB. Agora a validação exige STABLE_CHECKS (10)\nrespostas seguidas da cor nova antes de medir a taxa de erro.",
+===== run 42310187138 =====
+2026-11-06T23:11:53.2060046Z   Injeção de falha (SIMULATE_ERRORS)
+2026-11-06T23:11:53.2061248Z     ✓ mantém o /health em 200 (o target continua healthy) (3 ms)
+
+----- FIM -----

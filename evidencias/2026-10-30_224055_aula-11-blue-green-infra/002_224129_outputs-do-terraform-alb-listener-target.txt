@@ -1,0 +1,34 @@
+===== EVIDÊNCIA #002 — outputs do terraform (ALB, listener, target groups) =====
+Comando:            terraform output
+Shell:              direto
+Diretório:          /mnt/c/Users/lucas/unifaat-devops-portfolio/aula-11/terraform
+Ambiente:           WSL (Ubuntu) Ubuntu 26.04 LTS | usuário lucaskenway | host DESKTOP-AMJ5UEC
+Início:             2026-10-30T22:41:29.014-03:00
+Fim:                2026-10-30T22:41:49.201-03:00
+Duração:            20.187 s
+Código de retorno:  0 (sucesso)
+Dados sensíveis:    nenhum detectado
+Origem:             saída capturada diretamente do processo pela ferramenta evidencia 0.1.0
+
+----- SAÍDA (stdout e stderr intercalados, na ordem em que chegaram) -----
+alb_dns_name = "6325226-a11-alb-952867794.us-east-1.elb.amazonaws.com"
+blue_tg_arn = "arn:aws:elasticloadbalancing:us-east-1:844303000847:targetgroup/6325226-a11-blue/0e9d0915c2eec77c"
+ecr_repository_url = "844303000847.dkr.ecr.us-east-1.amazonaws.com/technova-api"
+green_tg_arn = "arn:aws:elasticloadbalancing:us-east-1:844303000847:targetgroup/6325226-a11-green/8fee59658a8a82a9"
+instance_ids = {
+  "blue" = "i-0a84afcd3f8770526"
+  "green" = "i-0310b191fcb19f202"
+}
+instance_public_ips = {
+  "blue" = "3.80.211.134"
+  "green" = "18.212.22.123"
+}
+listener_arn = "arn:aws:elasticloadbalancing:us-east-1:844303000847:listener/app/6325226-a11-alb/b2f9e5ba996bf443/13a6459a84a49b19"
+[33m╷[0m[0m
+[33m│[0m [0m[1m[33mWarning: [0m[0m[1mDeprecated Parameter[0m
+[33m│[0m [0m
+[33m│[0m [0m[0mThe parameter "dynamodb_table" is deprecated. Use parameter "use_lockfile"
+[33m│[0m [0minstead.
+[33m╵[0m[0m
+
+----- FIM -----

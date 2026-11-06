@@ -1,0 +1,28 @@
+===== EVIDÊNCIA #004 — ALB antes do deploy (502: nenhum target healthy) =====
+Comando:            curl -s -i http://6325226-a11-alb-952867794.us-east-1.elb.amazonaws.com/health
+Shell:              direto
+Diretório:          /mnt/c/Users/lucas/unifaat-devops-portfolio
+Ambiente:           WSL (Ubuntu) Ubuntu 26.04 LTS | usuário lucaskenway | host DESKTOP-AMJ5UEC
+Início:             2026-10-30T22:42:13.813-03:00
+Fim:                2026-10-30T22:42:14.136-03:00
+Duração:            0.322 s
+Código de retorno:  0 (sucesso)
+Dados sensíveis:    nenhum detectado
+Origem:             saída capturada diretamente do processo pela ferramenta evidencia 0.1.0
+
+----- SAÍDA (stdout e stderr intercalados, na ordem em que chegaram) -----
+HTTP/1.1 502 Bad Gateway
+Server: awselb/2.0
+Date: Sat, 31 Oct 2026 01:43:13 GMT
+Content-Type: text/html
+Content-Length: 122
+Connection: keep-alive
+
+<html>
+<head><title>502 Bad Gateway</title></head>
+<body>
+<center><h1>502 Bad Gateway</h1></center>
+</body>
+</html>
+
+----- FIM -----
