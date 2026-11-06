@@ -1,0 +1,98 @@
+===== EVIDÊNCIA #001 — Migracoes expand-contract: status, up, down 001, down 000, up de novo (Postgres na EC2 da aula 12) =====
+Comando:            bash -c 'tar czf - -C aula-12 scripts/demo-migrations.sh | ssh -i ~/.ssh/technova-aula10-deploy.pem -o LogLevel=ERROR ec2-user@44.204.33.200 '"'"'tar xzf - -C mig && cd mig && bash scripts/demo-migrations.sh'"'"''
+Shell:              direto
+Diretório:          /mnt/c/Users/lucas/portfolio-aula12
+Ambiente:           WSL (Ubuntu) Ubuntu 26.04 LTS | usuário lucaskenway | host DESKTOP-AMJ5UEC
+Início:             2026-11-06T19:42:03.333-03:00
+Fim:                2026-11-06T19:42:09.549-03:00
+Duração:            6.216 s
+Código de retorno:  0 (sucesso)
+Dados sensíveis:    nenhum detectado
+Origem:             saída capturada diretamente do processo pela ferramenta evidencia 0.1.0
+
+----- SAÍDA (stdout e stderr intercalados, na ordem em que chegaram) -----
+
+$ node migrations/cli.js status
+┌─────────┬────────┬────────────┬────────────────────────────────────────────────────────────────────────┬─────────────┬──────────────┐
+│ (index) │ versão │ estado     │ descrição                                                              │ aplicada_em │ revertida_em │
+├─────────┼────────┼────────────┼────────────────────────────────────────────────────────────────────────┼─────────────┼──────────────┤
+│ 0       │ '001'  │ 'pendente' │ 'Expand: adiciona customer_email em orders (mantém customer_name)'     │ '-'         │ '-'          │
+│ 1       │ '002'  │ 'pendente' │ 'Expand: adiciona status_v2 (enum expandido) mantendo status original' │ '-'         │ '-'          │
+└─────────┴────────┴────────────┴────────────────────────────────────────────────────────────────────────┴─────────────┴──────────────┘
+orders: 4 linhas | colunas: id, customer_id, customer_name, product, quantity, status, created_at
+
+$ node migrations/cli.js up
+[Migrate] Aplicando 001: Expand: adiciona customer_email em orders (mantém customer_name)
+[Migration 001] UP: customer_email adicionada (4 linhas preenchidas)
+[Migrate] 001 aplicada e verificada ✅
+[Migrate] Aplicando 002: Expand: adiciona status_v2 (enum expandido) mantendo status original
+[Migration 002] UP: status_v2 adicionado (4 linhas copiadas)
+[Migrate] 002 aplicada e verificada ✅
+✅ Migrações aplicadas: 001, 002
+┌─────────┬────────┬────────────┬────────────────────────────────────────────────────────────────────────┬────────────────────────────┬──────────────┐
+│ (index) │ versão │ estado     │ descrição                                                              │ aplicada_em                │ revertida_em │
+├─────────┼────────┼────────────┼────────────────────────────────────────────────────────────────────────┼────────────────────────────┼──────────────┤
+│ 0       │ '001'  │ 'aplicada' │ 'Expand: adiciona customer_email em orders (mantém customer_name)'     │ '2026-11-06T22:43:17.971Z' │ '-'          │
+│ 1       │ '002'  │ 'aplicada' │ 'Expand: adiciona status_v2 (enum expandido) mantendo status original' │ '2026-11-06T22:43:18.003Z' │ '-'          │
+└─────────┴────────┴────────────┴────────────────────────────────────────────────────────────────────────┴────────────────────────────┴──────────────┘
+orders: 4 linhas | colunas: id, customer_id, customer_name, product, quantity, status, created_at, customer_email, status_v2
+ id | customer_name |    customer_email     |  status   | status_v2 
+----+---------------+-----------------------+-----------+-----------
+  1 | Ana Souza     | ana@technova.com.br   | pending   | pending
+  2 | Bruno Lima    | bruno@technova.com.br | shipped   | shipped
+  3 | Carla Mendes  | carla@technova.com.br | delivered | delivered
+  4 | Ana Souza     | ana@technova.com.br   | pending   | pending
+(4 rows)
+
+
+$ node migrations/cli.js down 001
+[Rollback] Revertendo 002: Expand: adiciona status_v2 (enum expandido) mantendo status original
+[Migration 002] DOWN: status_v2, trigger e tipo removidos
+[Rollback] 002 revertida ✅
+✅ Revertidas: 002 (alvo 001)
+┌─────────┬────────┬─────────────┬────────────────────────────────────────────────────────────────────────┬────────────────────────────┬────────────────────────────┐
+│ (index) │ versão │ estado      │ descrição                                                              │ aplicada_em                │ revertida_em               │
+├─────────┼────────┼─────────────┼────────────────────────────────────────────────────────────────────────┼────────────────────────────┼────────────────────────────┤
+│ 0       │ '001'  │ 'aplicada'  │ 'Expand: adiciona customer_email em orders (mantém customer_name)'     │ '2026-11-06T22:43:17.971Z' │ '-'                        │
+│ 1       │ '002'  │ 'revertida' │ 'Expand: adiciona status_v2 (enum expandido) mantendo status original' │ '2026-11-06T22:43:18.003Z' │ '2026-11-06T22:43:18.836Z' │
+└─────────┴────────┴─────────────┴────────────────────────────────────────────────────────────────────────┴────────────────────────────┴────────────────────────────┘
+orders: 4 linhas | colunas: id, customer_id, customer_name, product, quantity, status, created_at, customer_email
+
+$ node migrations/cli.js down 000
+[Rollback] Revertendo 001: Expand: adiciona customer_email em orders (mantém customer_name)
+[Migration 001] DOWN: customer_email removida
+[Rollback] 001 revertida ✅
+✅ Revertidas: 001 (alvo 000)
+┌─────────┬────────┬─────────────┬────────────────────────────────────────────────────────────────────────┬────────────────────────────┬────────────────────────────┐
+│ (index) │ versão │ estado      │ descrição                                                              │ aplicada_em                │ revertida_em               │
+├─────────┼────────┼─────────────┼────────────────────────────────────────────────────────────────────────┼────────────────────────────┼────────────────────────────┤
+│ 0       │ '001'  │ 'revertida' │ 'Expand: adiciona customer_email em orders (mantém customer_name)'     │ '2026-11-06T22:43:17.971Z' │ '2026-11-06T22:43:19.587Z' │
+│ 1       │ '002'  │ 'revertida' │ 'Expand: adiciona status_v2 (enum expandido) mantendo status original' │ '2026-11-06T22:43:18.003Z' │ '2026-11-06T22:43:18.836Z' │
+└─────────┴────────┴─────────────┴────────────────────────────────────────────────────────────────────────┴────────────────────────────┴────────────────────────────┘
+orders: 4 linhas | colunas: id, customer_id, customer_name, product, quantity, status, created_at
+ id | customer_name |  status   
+----+---------------+-----------
+  1 | Ana Souza     | pending
+  2 | Bruno Lima    | shipped
+  3 | Carla Mendes  | delivered
+  4 | Ana Souza     | pending
+(4 rows)
+
+
+$ node migrations/cli.js up
+[Migrate] Aplicando 001: Expand: adiciona customer_email em orders (mantém customer_name)
+[Migration 001] UP: customer_email adicionada (4 linhas preenchidas)
+[Migrate] 001 aplicada e verificada ✅
+[Migrate] Aplicando 002: Expand: adiciona status_v2 (enum expandido) mantendo status original
+[Migration 002] UP: status_v2 adicionado (4 linhas copiadas)
+[Migrate] 002 aplicada e verificada ✅
+✅ Migrações aplicadas: 001, 002
+┌─────────┬────────┬────────────┬────────────────────────────────────────────────────────────────────────┬────────────────────────────┬──────────────┐
+│ (index) │ versão │ estado     │ descrição                                                              │ aplicada_em                │ revertida_em │
+├─────────┼────────┼────────────┼────────────────────────────────────────────────────────────────────────┼────────────────────────────┼──────────────┤
+│ 0       │ '001'  │ 'aplicada' │ 'Expand: adiciona customer_email em orders (mantém customer_name)'     │ '2026-11-06T22:43:20.412Z' │ '-'          │
+│ 1       │ '002'  │ 'aplicada' │ 'Expand: adiciona status_v2 (enum expandido) mantendo status original' │ '2026-11-06T22:43:20.433Z' │ '-'          │
+└─────────┴────────┴────────────┴────────────────────────────────────────────────────────────────────────┴────────────────────────────┴──────────────┘
+orders: 4 linhas | colunas: id, customer_id, customer_name, product, quantity, status, created_at, customer_email, status_v2
+
+----- FIM -----

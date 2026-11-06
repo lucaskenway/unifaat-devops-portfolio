@@ -1,0 +1,26 @@
+===== EVIDÊNCIA #003 — Feature flag FF_NEW_SHIPPING_CALC ligada e desligada (rollback de feature sem redeploy) - reexecucao com retorno 0 =====
+Comando:            bash -c 'cd aula-12 && bash scripts/demo-flags.sh'
+Shell:              direto
+Diretório:          /mnt/c/Users/lucas/portfolio-aula12
+Ambiente:           WSL (Ubuntu) Ubuntu 26.04 LTS | usuário lucaskenway | host DESKTOP-AMJ5UEC
+Início:             2026-11-06T19:42:51.490-03:00
+Fim:                2026-11-06T19:43:06.357-03:00
+Duração:            14.867 s
+Código de retorno:  0 (sucesso)
+Dados sensíveis:    nenhum detectado
+Origem:             saída capturada diretamente do processo pela ferramenta evidencia 0.1.0
+
+----- SAÍDA (stdout e stderr intercalados, na ordem em que chegaram) -----
+=== 1) FF_NEW_SHIPPING_CALC=true — frete novo (por peso) ===
+$ curl localhost:3100/flags
+{"flags":{"new_shipping_calc":true,"bulk_orders":false,"ai_recommendations":false,"new_checkout":false},"loadedAt":"2026-11-06T22:42:55.458Z"}
+$ curl -X POST localhost:3100/api/orders -d '{"customer_id":"123","items":[{"name":"Widget","price":29.90,"weight":0.3}]}'
+{"shippingMethod":"v2-peso","shipping":5,"subtotal":29.9,"total":34.9}
+
+=== 2) Problema no frete novo → desliga a flag e reinicia (sem redeploy) ===
+$ curl localhost:3100/flags
+{"flags":{"new_shipping_calc":false,"bulk_orders":false,"ai_recommendations":false,"new_checkout":false},"loadedAt":"2026-11-06T22:43:05.920Z"}
+$ curl -X POST localhost:3100/api/orders -d '{"customer_id":"123","items":[{"name":"Widget","price":29.90,"weight":0.3}]}'
+{"shippingMethod":"v1-fixo","shipping":10,"subtotal":29.9,"total":39.9}
+
+----- FIM -----

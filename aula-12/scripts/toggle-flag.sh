@@ -23,6 +23,7 @@ fi
 # Reaproveita imagem, labels e variáveis de deploy do container atual
 IMAGE=$(docker inspect --format '{{.Config.Image}}' "$CONTAINER_NAME")
 PREV=$(docker inspect --format '{{index .Config.Labels "previous.version"}}' "$CONTAINER_NAME")
+PREV_COMMIT=$(docker inspect --format '{{index .Config.Labels "previous.commit"}}' "$CONTAINER_NAME")
 get_env() { docker inspect --format '{{range .Config.Env}}{{println .}}{{end}}' "$CONTAINER_NAME" | sed -n "s/^$1=//p"; }
 SHA=$(get_env GITHUB_SHA); TAG=$(get_env IMAGE_TAG); TIME=$(get_env DEPLOY_TIME)
 
@@ -32,7 +33,7 @@ docker run -d --name "$CONTAINER_NAME" \
   -p 3000:3000 --restart unless-stopped \
   --env-file "$ENV_FILE" \
   -e GITHUB_SHA="$SHA" -e IMAGE_TAG="$TAG" -e DEPLOY_TIME="$TIME" \
-  --label "previous.version=$PREV" \
+  --label "previous.version=$PREV" --label "previous.commit=$PREV_COMMIT" \
   --log-driver awslogs --log-opt awslogs-region="$REGION" \
   --log-opt awslogs-group=/technova/api --log-opt awslogs-create-group=true \
   "$IMAGE" >/dev/null

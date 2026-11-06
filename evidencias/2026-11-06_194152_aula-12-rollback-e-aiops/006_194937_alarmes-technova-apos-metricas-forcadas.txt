@@ -1,0 +1,52 @@
+===== EVIDÊNCIA #006 — Alarmes TechNova-* apos metricas forcadas e invocacoes da Lambda AIOps disparadas pelo EventBridge =====
+Comando:            bash -c 'aws cloudwatch describe-alarms --alarm-name-prefix TechNova- --query '"'"'MetricAlarms[].[AlarmName,StateValue,StateUpdatedTimestamp]'"'"' --output table; aws cloudwatch describe-alarms --alarm-types CompositeAlarm --alarm-name-prefix TechNova- --query '"'"'CompositeAlarms[].[AlarmName,StateValue]'"'"' --output table; aws logs filter-log-events --log-group-name /aws/lambda/TechNovaAIOpsAnalyzer --start-time $(( ($(date +%s) - 900) * 1000 )) --filter-pattern '"'"'"Alarme:"'"'"' --query '"'"'events[].message'"'"' --output text | grep -E '"'"'Alarme:|Severidade:|Resumo|Fonte'"'"' | head -24'
+Shell:              direto
+Diretório:          /mnt/c/Users/lucas/portfolio-aula12
+Ambiente:           WSL (Ubuntu) Ubuntu 26.04 LTS | usuário lucaskenway | host DESKTOP-AMJ5UEC
+Início:             2026-11-06T19:49:37.028-03:00
+Fim:                2026-11-06T19:49:43.257-03:00
+Duração:            6.229 s
+Código de retorno:  0 (sucesso)
+Dados sensíveis:    nenhum detectado
+Origem:             saída capturada diretamente do processo pela ferramenta evidencia 0.1.0
+
+----- SAÍDA (stdout e stderr intercalados, na ordem em que chegaram) -----
+--------------------------------------------------------------------------------
+|                                DescribeAlarms                                |
++--------------------------------+--------+------------------------------------+
+|  TechNova-Error5xx-Anomaly     |  OK    |  2026-11-06T19:37:27.552000-03:00  |
+|  TechNova-HighError5xx         |  ALARM |  2026-11-06T19:49:00.303000-03:00  |
+|  TechNova-HighLatency          |  ALARM |  2026-11-06T19:50:14.396000-03:00  |
+|  TechNova-ResponseTime-Anomaly |  OK    |  2026-11-06T19:37:25.858000-03:00  |
++--------------------------------+--------+------------------------------------+
+-------------------------------------------------
+|                DescribeAlarms                 |
++--------------------------------------+--------+
+|  TechNova-Incident-LatencyAndErrors  |  ALARM |
++--------------------------------------+--------+
+Alarme: TechNova-HighLatency (ResponseTime)
+Severidade: P3
+Resumo: Anomalia em ResponseTime — investigação necessária
+Confiança: baixa | Fonte: regras (fallback sem Bedrock)
+  Severidade: P3 | confiança da análise: baixa
+Alarme: TechNova-HighLatency (ResponseTime)
+Severidade: P3
+Resumo: Anomalia em ResponseTime — investigação necessária
+Confiança: baixa | Fonte: regras (fallback sem Bedrock)
+  Severidade: P3 | confiança da análise: baixa
+Alarme: TechNova-HighError5xx (Error5xx)
+Severidade: P2
+Resumo: Latência 2200 ms — investigar saturação
+Confiança: baixa | Fonte: regras (fallback sem Bedrock)
+  Severidade: P2 | confiança da análise: baixa
+Alarme: TechNova-Incident-LatencyAndErrors (Unknown)
+Severidade: P2
+Resumo: Latência 2200 ms — investigar saturação
+Confiança: baixa | Fonte: regras (fallback sem Bedrock)
+  Severidade: P2 | confiança da análise: baixa
+Alarme: TechNova-HighLatency (ResponseTime)
+Severidade: P2
+Resumo: Latência 2200 ms — investigar saturação
+Confiança: baixa | Fonte: regras (fallback sem Bedrock)
+
+----- FIM -----

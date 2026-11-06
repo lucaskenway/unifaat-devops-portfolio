@@ -1,0 +1,29 @@
+===== EVIDÊNCIA #007 — Forca metricas altas no CloudWatch (TechNova/API) para disparar os alarmes e a Lambda AIOps via EventBridge =====
+Comando:            bash aula-12/scripts/force-alarm.sh 5
+Shell:              direto
+Diretório:          /mnt/c/Users/lucas/portfolio-aula12
+Ambiente:           WSL (Ubuntu) Ubuntu 26.04 LTS | usuário lucaskenway | host DESKTOP-AMJ5UEC
+Início:             2026-11-06T19:46:03.449-03:00
+Fim:                2026-11-06T19:51:22.261-03:00
+Duração:            318.812 s
+Código de retorno:  0 (sucesso)
+Dados sensíveis:    nenhum detectado
+Origem:             saída capturada diretamente do processo pela ferramenta evidencia 0.1.0
+
+----- SAÍDA (stdout e stderr intercalados, na ordem em que chegaram) -----
+22:46:05 ponto 1/10: ResponseTime=2200ms Error5xx=+8
+22:46:36 ponto 2/10: ResponseTime=2200ms Error5xx=+8
+22:47:08 ponto 3/10: ResponseTime=2200ms Error5xx=+8
+22:47:40 ponto 4/10: ResponseTime=2200ms Error5xx=+8
+22:48:12 ponto 5/10: ResponseTime=2200ms Error5xx=+8
+22:48:43 ponto 6/10: ResponseTime=2200ms Error5xx=+8
+22:49:15 ponto 7/10: ResponseTime=2200ms Error5xx=+8
+22:49:46 ponto 8/10: ResponseTime=2200ms Error5xx=+8
+22:50:18 ponto 9/10: ResponseTime=2200ms Error5xx=+8
+22:50:50 ponto 10/10: ResponseTime=2200ms Error5xx=+8
+TechNova-Error5xx-Anomaly	OK
+TechNova-HighError5xx	OK
+TechNova-HighLatency	ALARM
+TechNova-ResponseTime-Anomaly	OK
+
+----- FIM -----
