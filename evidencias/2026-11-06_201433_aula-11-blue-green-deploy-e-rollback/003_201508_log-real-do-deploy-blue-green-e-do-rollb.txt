@@ -1,0 +1,32 @@
+===== EVIDÊNCIA #003 — Log real do deploy Blue/Green e do rollback automatico da aula 11 (runs 42309886648 e 42310187138) - via API de jobs =====
+Comando:            bash -c 'bash aula-11/scripts/log-run.sh 42309886648; bash aula-11/scripts/log-run.sh 42310187138'
+Shell:              direto
+Diretório:          /mnt/c/Users/lucas/unifaat-devops-portfolio
+Ambiente:           WSL (Ubuntu) Ubuntu 26.04 LTS | usuário lucaskenway | host DESKTOP-AMJ5UEC
+Início:             2026-11-06T20:15:08.083-03:00
+Fim:                2026-11-06T20:15:14.340-03:00
+Duração:            6.257 s
+Código de retorno:  0 (sucesso)
+Dados sensíveis:    nenhum detectado
+Origem:             saída capturada diretamente do processo pela ferramenta evidencia 0.1.0
+
+----- SAÍDA (stdout e stderr intercalados, na ordem em que chegaram) -----
+===== run 42309886648 (push → success) =====
+[23:10:07] target group blue: healthy
+[23:10:13] 🔀 tráfego green → blue em 2574 ms (chamada à API do ALB)
+[23:10:26] ✅ ALB servindo blue: {"status":"ok","timestamp":"2026-11-06T23:10:26.762Z","version":"1.2.0","color":"blue"}
+[23:10:26] ✅ /version: {"version":"1.2.0","commit":"0c925e103950608e9d6b42a35aef2ba75eac7b06","deployedAt":"2026-11-06T23:10:02Z","color":"blue"}
+[23:10:27] ✅ 20/20 requisições OK em /api/orders
+===== run 42310187138 (workflow_dispatch → failure) =====
+[23:12:53] target group green: healthy
+[23:12:59] 🔀 tráfego blue → green em 3132 ms (chamada à API do ALB)
+[23:13:13] ✅ ALB servindo green: {"status":"ok","timestamp":"2026-11-06T23:13:13.836Z","version":"1.2.0","color":"green"}
+[23:13:13] ✅ /version: {"version":"1.2.0","commit":"2507a1c8e55454de83a4dd8a33eacdbc2719afa3","deployedAt":"2026-11-06T23:12:48Z","color":"green"}
+[23:13:14] ❌ requisição 1/20 em /api/orders: HTTP 500
+[23:13:16] ERRO: 20/20 requisições falharam em /api/orders (taxa de erro 100%)
+[23:13:23] 🔀 tráfego green → blue em 2944 ms (chamada à API do ALB)
+[23:13:35] ainda há resposta da cor antiga (propagação), recomeçando a contagem
+[23:13:38] ✅ ALB servindo blue: {"status":"ok","timestamp":"2026-11-06T23:13:38.389Z","version":"1.2.0","color":"blue"}
+[23:13:40] ✅ 20/20 requisições OK em /api/orders
+
+----- FIM -----

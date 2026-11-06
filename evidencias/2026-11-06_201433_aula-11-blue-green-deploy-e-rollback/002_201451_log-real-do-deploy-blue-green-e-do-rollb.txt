@@ -1,0 +1,67 @@
+===== EVIDÊNCIA #002 — Log real do deploy Blue/Green e do rollback automatico da aula 11 (runs 42309886648 e 42310187138) - filtro corrigido =====
+Comando:            bash -c 'for r in 42309886648 42310187138; do echo "===== run $r ====="; gh run view $r -R lucaskenway/unifaat-devops-portfolio --log | sed '"'"'s/^[^\t]*\t[^\t]*\t//'"'"' | grep -E '"'"'\] '"'"' | grep -vE '"'"'\[36;1m|requisição ([2-9]|1[0-9]|20)/|aguardando|target group .*: (initial|unused)'"'"' | sed '"'"'s/^[0-9T:.-]*Z //'"'"' | head -30; done'
+Shell:              direto
+Diretório:          /mnt/c/Users/lucas/unifaat-devops-portfolio
+Ambiente:           WSL (Ubuntu) Ubuntu 26.04 LTS | usuário lucaskenway | host DESKTOP-AMJ5UEC
+Início:             2026-11-06T20:14:51.696-03:00
+Fim:                2026-11-06T20:14:54.312-03:00
+Duração:            2.615 s
+Código de retorno:  0 (sucesso)
+Dados sensíveis:    nenhum detectado
+Origem:             saída capturada diretamente do processo pela ferramenta evidencia 0.1.0
+
+----- SAÍDA (stdout e stderr intercalados, na ordem em que chegaram) -----
+===== run 42309886648 =====
+ * [new ref]         0c925e103950608e9d6b42a35aef2ba75eac7b06 -> origin/main
+(node:2196) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(node:2196) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+(node:2354) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+ * [new ref]         0c925e103950608e9d6b42a35aef2ba75eac7b06 -> origin/main
+(node:2272) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+#1 [internal] booting buildkit
+(node:2752) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+#1 [internal] load build definition from Dockerfile
+#2 [auth] library/node:pull token for registry-1.docker.io
+#3 [internal] load metadata for docker.io/library/node:20-alpine
+#4 [internal] load .dockerignore
+#5 [builder 1/4] FROM docker.io/library/node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293
+#7 [internal] load build context
+#8 [builder 4/4] RUN npm ci --omit=dev && npm cache clean --force
+#9 [builder 3/4] COPY package*.json ./
+#10 [runtime 4/5] COPY --from=builder --chown=technova:nodejs /app/node_modules ./node_modules
+#11 [builder 2/4] WORKDIR /app
+#12 [runtime 3/5] RUN apk upgrade --no-cache &&     rm -rf /usr/local/lib/node_modules /usr/local/bin/npm /usr/local/bin/npx            /usr/local/bin/corepack /opt/yarn* /usr/local/bin/yarn /usr/local/bin/yarnpkg &&     addgroup -g 1001 -S nodejs &&     adduser -S technova -u 1001 -G nodejs
+#13 [runtime 5/5] COPY --chown=technova:nodejs package.json server.js ./
+#14 [auth] sharing credentials for 844303000847.dkr.ecr.us-east-1.amazonaws.com
+(node:3043) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(node:3043) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+(node:3182) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+===== run 42310187138 =====
+ * [new ref]         2507a1c8e55454de83a4dd8a33eacdbc2719afa3 -> origin/main
+(node:2607) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(node:2607) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+(node:2761) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+ * [new ref]         2507a1c8e55454de83a4dd8a33eacdbc2719afa3 -> origin/main
+(node:2412) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+#1 [internal] booting buildkit
+(node:2902) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+#1 [internal] load build definition from Dockerfile
+#2 [internal] load metadata for docker.io/library/node:20-alpine
+#3 [auth] library/node:pull token for registry-1.docker.io
+#2 [internal] load metadata for docker.io/library/node:20-alpine
+#4 [internal] load .dockerignore
+#5 [internal] load build context
+#6 [builder 1/4] FROM docker.io/library/node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293
+#5 [internal] load build context
+#8 [builder 2/4] WORKDIR /app
+#9 [runtime 3/5] RUN apk upgrade --no-cache &&     rm -rf /usr/local/lib/node_modules /usr/local/bin/npm /usr/local/bin/npx            /usr/local/bin/corepack /opt/yarn* /usr/local/bin/yarn /usr/local/bin/yarnpkg &&     addgroup -g 1001 -S nodejs &&     adduser -S technova -u 1001 -G nodejs
+#10 [builder 3/4] COPY package*.json ./
+#11 [builder 4/4] RUN npm ci --omit=dev && npm cache clean --force
+#12 [runtime 4/5] COPY --from=builder --chown=technova:nodejs /app/node_modules ./node_modules
+#13 [runtime 5/5] COPY --chown=technova:nodejs package.json server.js ./
+#15 [auth] sharing credentials for 844303000847.dkr.ecr.us-east-1.amazonaws.com
+(node:3192) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(node:3192) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+(node:3330) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+
+----- FIM -----

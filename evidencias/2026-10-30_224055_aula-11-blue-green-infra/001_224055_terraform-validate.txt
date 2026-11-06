@@ -1,0 +1,17 @@
+===== EVIDÊNCIA #001 — terraform validate =====
+Comando:            terraform validate
+Shell:              direto
+Diretório:          /mnt/c/Users/lucas/unifaat-devops-portfolio/aula-11/terraform
+Ambiente:           WSL (Ubuntu) Ubuntu 26.04 LTS | usuário lucaskenway | host DESKTOP-AMJ5UEC
+Início:             2026-10-30T22:40:55.811-03:00
+Fim:                2026-10-30T22:41:28.119-03:00
+Duração:            32.308 s
+Código de retorno:  0 (sucesso)
+Dados sensíveis:    nenhum detectado
+Origem:             saída capturada diretamente do processo pela ferramenta evidencia 0.1.0
+
+----- SAÍDA (stdout e stderr intercalados, na ordem em que chegaram) -----
+[32m[1mSuccess![0m The configuration is valid.
+[0m
+
+----- FIM -----

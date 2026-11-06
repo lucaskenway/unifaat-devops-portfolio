@@ -1,0 +1,129 @@
+{
+  "versao_formato": 1,
+  "descricao": "aula-11 blue-green infra",
+  "projeto": "unifaat-devops-portfolio",
+  "raiz_projeto": "C:/Users/lucas/unifaat-devops-portfolio",
+  "inicio": "2026-10-30T22:40:55-03:00",
+  "fim": "2026-10-30T22:51:29-03:00",
+  "ambiente_inicio": {
+    "so": "WSL (Ubuntu) Ubuntu 26.04 LTS",
+    "usuario": "lucaskenway",
+    "host": "DESKTOP-AMJ5UEC",
+    "python": "3.14.4",
+    "terminal": ""
+  },
+  "itens": [
+    {
+      "numero": 1,
+      "tipo": "registro",
+      "descricao": "terraform validate",
+      "comando": "terraform validate",
+      "shell": "direto",
+      "estilo": "terminal",
+      "cwd": "/mnt/c/Users/lucas/unifaat-devops-portfolio/aula-11/terraform",
+      "inicio": "2026-10-30T22:40:55-03:00",
+      "fim": "2026-10-30T22:41:28-03:00",
+      "duracao_s": 32.30794740999954,
+      "retorno": 0,
+      "interrompido": false,
+      "redacoes": {},
+      "avisos": [],
+      "arquivos": [
+        {
+          "nome": "001_224055_terraform-validate.txt",
+          "tipo": "txt",
+          "sha256": "898f5fd9f93a6e1a2a3a0f36e65d321cfb6caecbf56fa328956a48c1a7c1c8a6"
+        },
+        {
+          "nome": "001_224055_terraform-validate_renderizada.png",
+          "tipo": "png-renderizada",
+          "sha256": "cb8826a8099fb38ea6be54c508899544e204a22d07cfa17d56718390febb11fc"
+        }
+      ]
+    },
+    {
+      "numero": 2,
+      "tipo": "registro",
+      "descricao": "outputs do terraform (ALB, listener, target groups)",
+      "comando": "terraform output",
+      "shell": "direto",
+      "estilo": "terminal",
+      "cwd": "/mnt/c/Users/lucas/unifaat-devops-portfolio/aula-11/terraform",
+      "inicio": "2026-10-30T22:41:29-03:00",
+      "fim": "2026-10-30T22:41:49-03:00",
+      "duracao_s": 20.186974659000043,
+      "retorno": 0,
+      "interrompido": false,
+      "redacoes": {},
+      "avisos": [],
+      "arquivos": [
+        {
+          "nome": "002_224129_outputs-do-terraform-alb-listener-target.txt",
+          "tipo": "txt",
+          "sha256": "4f4da06f853570014e29ddbb27cd61b25212a0de9968eda95d24abcec2e38f17"
+        },
+        {
+          "nome": "002_224129_outputs-do-terraform-alb-listener-target_renderizada.png",
+          "tipo": "png-renderizada",
+          "sha256": "1f4f382ceda3792495c8d7138f5d768ce94bfd68bcfd68cde1eda24e16c20e64"
+        }
+      ]
+    },
+    {
+      "numero": 3,
+      "tipo": "registro",
+      "descricao": "estado blue/green antes do primeiro deploy",
+      "comando": "bash aula-11/scripts/bluegreen.sh status",
+      "shell": "direto",
+      "estilo": "terminal",
+      "cwd": "/mnt/c/Users/lucas/unifaat-devops-portfolio",
+      "inicio": "2026-10-30T22:41:49-03:00",
+      "fim": "2026-10-30T22:42:12-03:00",
+      "duracao_s": 22.932808093999483,
+      "retorno": 0,
+      "interrompido": false,
+      "redacoes": {},
+      "avisos": [],
+      "arquivos": [
+        {
+          "nome": "003_224149_estado-blue-green-antes-do-primeiro-depl.txt",
+          "tipo": "txt",
+          "sha256": "a2f663a17fc7f521adb434c6fda1d7555f67c7b979fe7a22961b37e7de3adc20"
+        },
+        {
+          "nome": "003_224149_estado-blue-green-antes-do-primeiro-depl_renderizada.png",
+          "tipo": "png-renderizada",
+          "sha256": "18ac1efa59f93d8114122fb16ef5ec6b26bc6716b4de23cb25e34373afb8f3b7"
+        }
+      ]
+    },
+    {
+      "numero": 4,
+      "tipo": "registro",
+      "descricao": "ALB antes do deploy (502: nenhum target healthy)",
+      "comando": "curl -s -i http://6325226-a11-alb-952867794.us-east-1.elb.amazonaws.com/health",
+      "shell": "direto",
+      "estilo": "terminal",
+      "cwd": "/mnt/c/Users/lucas/unifaat-devops-portfolio",
+      "inicio": "2026-10-30T22:42:13-03:00",
+      "fim": "2026-10-30T22:42:14-03:00",
+      "duracao_s": 0.3222774469995784,
+      "retorno": 0,
+      "interrompido": false,
+      "redacoes": {},
+      "avisos": [],
+      "arquivos": [
+        {
+          "nome": "004_224213_alb-antes-do-deploy-502-nenhum-target-he.txt",
+          "tipo": "txt",
+          "sha256": "2b2d1c10a3fbd3263bd5d71504820675a66a7be44996202ea25beefd80e23e9e"
+        },
+        {
+          "nome": "004_224213_alb-antes-do-deploy-502-nenhum-target-he_renderizada.png",
+          "tipo": "png-renderizada",
+          "sha256": "bcd1f265dc3601e0497971410682647740d5f5b34707017f63402a1858916ff5"
+        }
+      ]
+    }
+  ]
+}
