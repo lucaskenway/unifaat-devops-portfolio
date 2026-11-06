@@ -19,7 +19,10 @@ if [ -z "$PREVIOUS_TAG" ] || [ "$PREVIOUS_TAG" = "<no value>" ]; then
   echo "❌ Versão anterior desconhecida. Informe: rollback.sh <container> <repo> <tag>"
   exit 1
 fi
-echo "   Versão alvo: $REPO:$PREVIOUS_TAG"
+# Commit da versão anterior (label gravado pelo deploy); sem ele, deriva da tag
+PREVIOUS_COMMIT=$(docker inspect --format '{{index .Config.Labels "previous.commit"}}' "$CONTAINER_NAME" 2>/dev/null || true)
+case "$PREVIOUS_COMMIT" in ""|"<no value>") PREVIOUS_COMMIT=$(echo "$PREVIOUS_TAG" | sed -E 's/^a12-sha-([0-9a-f]+).*/\1/') ;; esac
+echo "   Versão alvo: $REPO:$PREVIOUS_TAG (commit $PREVIOUS_COMMIT)"
 
 # Token do ECR expira; login sempre antes do pull
 aws ecr get-login-password --region "$REGION" | docker login --username AWS --password-stdin "${REPO%%/*}"
@@ -29,7 +32,7 @@ docker rm -f "$CONTAINER_NAME" >/dev/null 2>&1 || true
 docker run -d --name "$CONTAINER_NAME" \
   -p 3000:3000 --restart unless-stopped \
   --env-file "$ENV_FILE" \
-  -e GITHUB_SHA="${PREVIOUS_TAG#sha-}" -e IMAGE_TAG="$PREVIOUS_TAG" \
+  -e GITHUB_SHA="$PREVIOUS_COMMIT" -e IMAGE_TAG="$PREVIOUS_TAG" \
   -e DEPLOY_TIME="$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
   --log-driver awslogs --log-opt awslogs-region="$REGION" \
   --log-opt awslogs-group=/technova/api --log-opt awslogs-create-group=true \

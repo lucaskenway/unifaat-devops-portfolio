@@ -10,7 +10,19 @@ Defesas operacionais da TechNova API no AWS Academy Learner Lab (`us-east-1`):
 | Runbook | Roteiro de incidente com diagnóstico, rollback, flag e escalação | `docs/runbooks/deploy-failed.md` |
 | AIOps | Métricas `TechNova/API`, alarmes fixos e anomaly band, alarme composto, dashboard, Lambda `LabRole` disparada pelo EventBridge | `src/metrics.js`, `terraform/aiops.tf`, `lambda-aiops/` |
 
-Análise crítica: [`aiops-analise.md`](aiops-analise.md). Evidências: [`screenshots/`](screenshots/) e `evidencias/` na raiz.
+Análise crítica: [`aiops-analise.md`](aiops-analise.md). Evidências: [`screenshots/`](screenshots/) e `evidencias/2026-11-06_194152_aula-12-rollback-e-aiops/` na raiz.
+
+| Screenshot | O que mostra |
+|---|---|
+| `feature-flag.png` | Flag desligada e religada **na EC2 de produção** com `toggle-flag.sh` (mesma imagem); `/flags` responde 403 em produção |
+| `feature-flag-local.png` | Mesma demo local, com o `/flags` liberado |
+| `migration-up-down.png` | `status` → `up` → `down 001` → `down 000` → `up` num Postgres na EC2; as 4 linhas de `orders` ficam intactas |
+| `auto-rollback.png`, `auto-rollback-log.png` | Run 42310191161 (`simulate_failure`): 6/6 checks com 503, rollback de `r3` para `r2` em cerca de 4 s, SNS publicado, workflow vermelho |
+| `cd-deploy-sucesso.png` | Deploy normal com health check aprovado |
+| `cloudwatch-alarm.png`, `cloudwatch-metrics-anomaly-band.png` | Alarmes fixos e composto em ALARM, banda de anomalia (ainda sem histórico) e análises da Lambda disparadas pelo EventBridge |
+| `aiops-analysis.png`, `aiops-lambda-invoke.png` | Simulador com 3 cenários (3/3 corretos) e invocação da Lambda com a `LabRole` |
+
+> As imagens renderizadas a partir de logs têm uma faixa amarela que diz isso. Elas vêm do `evidencia`, e o TXT original e o SHA-256 ficam na pasta de evidências.
 
 ## Estrutura
 

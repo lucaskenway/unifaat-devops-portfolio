@@ -131,8 +131,10 @@ jobs:
         env:
           HOST: ${{ steps.host.outputs.ip }}
         run: |
-          PREV=$(curl -s -f --max-time 5 "http://$HOST:3000/version" | jq -r '.imageTag // empty' || true)
-          echo "tag=$PREV" >> "$GITHUB_OUTPUT"
+          V=$(curl -s -f --max-time 5 "http://$HOST:3000/version" || true)
+          PREV=$(echo "$V" | jq -r '.imageTag // empty' 2>/dev/null || true)
+          PREV_COMMIT=$(echo "$V" | jq -r '.commit // empty' 2>/dev/null || true)
+          { echo "tag=$PREV"; echo "commit=$PREV_COMMIT"; } >> "$GITHUB_OUTPUT"
           echo "📋 Em produção antes do deploy: ${PREV:-(nada — primeiro deploy)}"
 
       - name: Deploy via SSH
@@ -141,6 +143,7 @@ jobs:
           REPO: ${{ steps.host.outputs.repo }}
           TAG: ${{ needs.build-push.outputs.tag }}
           PREV: ${{ steps.previous.outputs.tag }}
+          PREV_COMMIT: ${{ steps.previous.outputs.commit }}
           DEPLOY_SHA: ${{ github.sha }}
           DEPLOY_TIME: ${{ steps.host.outputs.time }}
           FAIL: ${{ inputs.simulate_failure && 'true' || 'false' }}
@@ -148,7 +151,7 @@ jobs:
           host: ${{ steps.host.outputs.ip }}
           username: ec2-user
           key: ${{ secrets.EC2_SSH_KEY }}
-          envs: REPO,TAG,PREV,DEPLOY_SHA,DEPLOY_TIME,FAIL
+          envs: REPO,TAG,PREV,PREV_COMMIT,DEPLOY_SHA,DEPLOY_TIME,FAIL
           script: |
             set -euo pipefail
             for _ in $(seq 1 30); do docker info >/dev/null 2>&1 && break; sleep 5; done
@@ -162,6 +165,7 @@ jobs:
               -e GITHUB_SHA="$DEPLOY_SHA" -e IMAGE_TAG="$TAG" -e DEPLOY_TIME="$DEPLOY_TIME" \
               -e FAIL_HEALTHCHECK="$FAIL" \
               --label "previous.version=$PREV" \
+              --label "previous.commit=$PREV_COMMIT" \
               --log-driver awslogs --log-opt awslogs-region=us-east-1 \
               --log-opt awslogs-group=/technova/api --log-opt awslogs-create-group=true \
               "$REPO:$TAG"

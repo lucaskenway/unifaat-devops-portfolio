@@ -1,0 +1,20 @@
+===== EVIDÊNCIA #004 — Invocacao da Lambda TechNovaAIOpsAnalyzer (LabRole) com evento de alarme de teste =====
+Comando:            bash -c 'aws lambda invoke --function-name TechNovaAIOpsAnalyzer --payload fileb://aula-12/lambda-aiops/test-event.json /tmp/aiops-response.json --query '"'"'[StatusCode,FunctionError]'"'"' --output text && jq . /tmp/aiops-response.json && aws lambda get-function-configuration --function-name TechNovaAIOpsAnalyzer --query '"'"'{Role:Role,Runtime:Runtime}'"'"' --output table'
+Shell:              direto
+Diretório:          /mnt/c/Users/lucas/portfolio-aula12
+Ambiente:           WSL (Ubuntu) Ubuntu 26.04 LTS | usuário lucaskenway | host DESKTOP-AMJ5UEC
+Início:             2026-11-06T19:43:20.679-03:00
+Fim:                2026-11-06T19:43:24.389-03:00
+Duração:            3.709 s
+Código de retorno:  127 (FALHA)
+Dados sensíveis:    nenhum detectado
+Origem:             saída capturada diretamente do processo pela ferramenta evidencia 0.1.0
+
+----- SAÍDA (stdout e stderr intercalados, na ordem em que chegaram) -----
+200	None
+bash: line 1: jq: command not found
+
+----- SOMENTE STDERR -----
+bash: line 1: jq: command not found
+
+----- FIM -----

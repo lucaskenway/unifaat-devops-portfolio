@@ -48,7 +48,7 @@ A Lambda tenta o `InvokeModel` (Claude 3 Haiku) quando `USE_BEDROCK=true`. No La
 4. Um 5xx alto sem stack trace vira P1 se a latência também estiver alta, ou P2 se não.
 5. Latência alta sozinha vira P2.
 
-O `local-simulator.js` roda os 3 cenários do lab (latência por pool de banco, bug no deploy, memory leak) com as mesmas regras e acerta **3 de 3** na severidade e na decisão de rollback. `node local-simulator.js 2 --prompt` imprime o mesmo prompt que iria para o Bedrock, para colar no Kiro AI e comparar com a análise por regras. O resultado dessa comparação fica em `screenshots/aiops-analysis.png`.
+O `local-simulator.js` roda os 3 cenários do lab (latência por pool de banco, bug no deploy, memory leak) com as mesmas regras e acerta **3 de 3** na severidade e na decisão de rollback. `node local-simulator.js 2 --prompt` imprime o mesmo prompt que iria para o Bedrock, para colar no Kiro AI e comparar com a análise por regras. A saída do simulador está em `screenshots/aiops-analysis.png`, e a da Lambda real, em `screenshots/aiops-lambda-invoke.png` e `screenshots/cloudwatch-alarm.png`.
 
 **Erro que o teste real mostrou:** na primeira versão, o alarme `TechNova-HighError5xx` chegou à Lambda e foi classificado como "latência 2200 ms, P2". O motivo é que não havia regra para 5xx sem stack trace, e a regra de latência pegou o caso. Corrigi a regra (item 4 acima) e reapliquei a Lambda. É o tipo de falha que só aparece com evento de verdade, e não nos cenários prontos.
 
