@@ -21,6 +21,7 @@ ALB_NAME="${ALB_NAME:-6325226-a11-alb}"
 TG_PREFIX="${TG_PREFIX:-6325226-a11}"
 EC2_PREFIX="${EC2_PREFIX:-6325226-technova-aula11}"
 VALIDATE_REQUESTS="${VALIDATE_REQUESTS:-20}"
+STABLE_CHECKS="${STABLE_CHECKS:-10}"   # respostas seguidas da cor nova antes de validar
 HEALTHY_TIMEOUT="${HEALTHY_TIMEOUT:-300}"
 
 log() { echo "[$(date -u +%H:%M:%S)] $*" >&2; }
@@ -134,14 +135,23 @@ cmd_validate() {
   local color="$1" sha="${2:-}" dns body code i fails=0
   dns=$(alb_dns)
 
-  # O modify-listener vale para conexões novas em poucos segundos; espera a cor nova aparecer
-  for i in $(seq 1 12); do
+  # O modify-listener vale para conexões novas em alguns segundos, e durante a propagação
+  # os nós do ALB ainda alternam entre as duas cores. Só segue quando $STABLE_CHECKS
+  # respostas SEGUIDAS vierem da cor nova (uma resposta só não prova a troca).
+  local streak=0
+  for i in $(seq 1 30); do
     body=$(curl -s --max-time 5 "http://$dns/health" || true)
-    echo "$body" | grep -q "\"color\":\"$color\"" && break
-    log "aguardando o ALB servir $color ($i/12)..."
-    sleep 5
+    if echo "$body" | grep -q "\"color\":\"$color\""; then
+      streak=$((streak + 1))
+      [ "$streak" -ge "$STABLE_CHECKS" ] && break
+    else
+      [ "$streak" -gt 0 ] && log "ainda há resposta da cor antiga (propagação), recomeçando a contagem"
+      streak=0
+      log "aguardando o ALB servir só $color ($i/30)..."
+      sleep 2
+    fi
   done
-  echo "$body" | grep -q "\"color\":\"$color\"" || die "o ALB não está servindo $color: $body"
+  [ "$streak" -ge "$STABLE_CHECKS" ] || die "o ALB não está servindo só $color: $body"
   log "✅ ALB servindo $color: $body"
 
   if [ -n "$sha" ]; then
