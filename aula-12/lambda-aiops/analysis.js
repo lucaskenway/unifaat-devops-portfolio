@@ -76,6 +76,26 @@ function ruleBasedAnalysis(alarmInfo, context) {
     };
   }
 
+  // 5xx alto sem stack trace nos logs: incidente real mesmo sem saber a causa.
+  // Com latência alta junto (ou o alarme composto) é P1.
+  if (last(errors) >= 10 || /Error5xx|Incident/.test(alarmInfo.alarmName)) {
+    const slow = latency.length && last(latency) > 1000;
+    if (errors.length) evidencias.push(`Error5xx em ${last(errors)}/min (limite 10/min)`);
+    if (slow) evidencias.push(`ResponseTime em ${last(latency)} ms ao mesmo tempo`);
+    evidencias.push('Nenhum stack trace nos logs: a causa não aparece no código');
+    return {
+      severidade: slow ? 'P1' : 'P2',
+      causa_raiz_provavel: slow
+        ? 'Degradação geral (erros + latência) sem erro de código nos logs: recurso saturado ou dependência falhando.'
+        : 'Erros 5xx sem stack trace: falha em dependência ou na infraestrutura.',
+      confianca: 'baixa',
+      evidencias,
+      acao_recomendada: 'Comparar o início com o último deploy (/version). Se coincidir, rollback; senão, checar EC2 (CPU/memória) e dependências.',
+      rollback_necessario: false,
+      resumo: slow ? 'Erros 5xx + latência alta — incidente P1, causa a confirmar' : `Error5xx em ${last(errors)}/min — investigar`
+    };
+  }
+
   if (latency.length && last(latency) > 1000) {
     evidencias.push(`ResponseTime em ${last(latency)} ms (limite 1000 ms) sem erros nos logs`);
     return {
